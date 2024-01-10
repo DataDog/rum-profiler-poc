@@ -1,7 +1,7 @@
 {
   "name": "@datadog/rum-profiler-poc",
   "version": "0.0.0",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/main.umd.cjs",
   "module": "./dist/main.js",
