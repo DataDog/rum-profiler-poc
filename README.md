@@ -106,4 +106,4 @@ yarn playground
 
 ## License
 
-UNLICENSED
+[Apache 2.0](https://github.com/DataDog/rum-profiler-poc/blob/main/LICENSE.md)
