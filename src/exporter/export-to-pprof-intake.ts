@@ -74,9 +74,10 @@ function buildPprof(trace: RumProfilerTrace): Blob {
     for (let frameIndex = 0; frameIndex < trace.frames.length; frameIndex++) {
         const frame = trace.frames[frameIndex];
 
-        const filename = frame.resourceId
-            ? stringsTable.dedup(trace.resources[frame.resourceId])
-            : 0;
+        const filename =
+            frame.resourceId !== undefined
+                ? stringsTable.dedup(trace.resources[frame.resourceId])
+                : 0;
         const name = stringsTable.dedup(frame.name || ANONYMOUS_FUNCTION);
         const systemName = name; // Use the same name for system name as we don't have un-minification on the client side
 

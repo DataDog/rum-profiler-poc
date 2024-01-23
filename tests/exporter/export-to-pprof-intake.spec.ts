@@ -310,7 +310,7 @@ describe("exportToPprofIntake", () => {
           {
             "column": 37,
             "function": {
-              "filename": "",
+              "filename": "http://localhost:5173/@fs/Users/dev/rum-profiler-poc/src/rumProfiler.ts",
               "id": 2,
               "name": "(anonymous)",
               "startLine": 0,
@@ -322,7 +322,7 @@ describe("exportToPprofIntake", () => {
           {
             "column": 8,
             "function": {
-              "filename": "",
+              "filename": "http://localhost:5173/@fs/Users/dev/rum-profiler-poc/src/rumProfiler.ts",
               "id": 3,
               "name": "start",
               "startLine": 0,
@@ -930,7 +930,7 @@ describe("exportToPprofIntake", () => {
       Profile.decode(new Uint8Array(await wallTimeBlob.arrayBuffer()))
     );
 
-    // TODO: All filenames are empty - it's  a bug to fix
+    // Filenames should not be empty
     expect(profile).toMatchInlineSnapshot(`
       {
         "comments": [],
@@ -938,14 +938,14 @@ describe("exportToPprofIntake", () => {
         "durationNanos": 1000000,
         "functions": [
           {
-            "filename": "",
+            "filename": "https://static.my-app.com/main.js",
             "id": 1,
             "name": "write",
             "startLine": 0,
             "systemName": "write",
           },
           {
-            "filename": "",
+            "filename": "https://static.my-app.com/main.js",
             "id": 2,
             "name": "read",
             "startLine": 0,
@@ -957,7 +957,7 @@ describe("exportToPprofIntake", () => {
           {
             "column": 1,
             "function": {
-              "filename": "",
+              "filename": "https://static.my-app.com/main.js",
               "id": 1,
               "name": "write",
               "startLine": 0,
@@ -969,7 +969,7 @@ describe("exportToPprofIntake", () => {
           {
             "column": 1,
             "function": {
-              "filename": "",
+              "filename": "https://static.my-app.com/main.js",
               "id": 2,
               "name": "read",
               "startLine": 0,
@@ -1015,7 +1015,7 @@ describe("exportToPprofIntake", () => {
               {
                 "column": 1,
                 "function": {
-                  "filename": "",
+                  "filename": "https://static.my-app.com/main.js",
                   "id": 1,
                   "name": "write",
                   "startLine": 0,
@@ -1027,7 +1027,7 @@ describe("exportToPprofIntake", () => {
               {
                 "column": 1,
                 "function": {
-                  "filename": "",
+                  "filename": "https://static.my-app.com/main.js",
                   "id": 2,
                   "name": "read",
                   "startLine": 0,
