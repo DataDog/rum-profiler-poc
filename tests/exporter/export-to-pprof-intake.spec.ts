@@ -8,6 +8,7 @@ import { mockUserAgent } from "../mock-user-agent";
 import { resolveProfile } from "../resolve-profile";
 
 import { trace as playgroundTrace } from "./__fixtures__/playground-trace";
+import { trace as zeroIndexTrace } from "./__fixtures__/zero-index-trace";
 import { RumProfilerTrace } from "../../src/types";
 import { exportToPprofIntake } from "../../src/exporter/export-to-pprof-intake";
 
@@ -905,6 +906,143 @@ describe("exportToPprofIntake", () => {
           6357499,
           6357499,
           1,
+        ],
+      }
+    `);
+  });
+
+  it("exports trace with zero-index resource", async () => {
+    await exportToPprofIntake(
+      zeroIndexTrace as unknown as RumProfilerTrace,
+      fakeConfig
+    );
+
+    const { formData } = extractIntakeUrlAndFormDataFromSendBeacon();
+
+    const wallTimeBlob = formData.get("wall-time.pprof") as Blob;
+    expect(wallTimeBlob).toBeDefined();
+    expect(wallTimeBlob.type).toBe("application/octet-stream");
+    expect(wallTimeBlob.size).toBeGreaterThan(0);
+
+    // Resolve internal references to make the test easier to read
+    const profile = resolveProfile(
+      // Decode with a different library (pprof-format) to be sure our encoding is correct
+      Profile.decode(new Uint8Array(await wallTimeBlob.arrayBuffer()))
+    );
+
+    // TODO: All filenames are empty - it's  a bug to fix
+    expect(profile).toMatchInlineSnapshot(`
+      {
+        "comments": [],
+        "dropFrames": 0,
+        "durationNanos": 1000000,
+        "functions": [
+          {
+            "filename": "",
+            "id": 1,
+            "name": "write",
+            "startLine": 0,
+            "systemName": "write",
+          },
+          {
+            "filename": "",
+            "id": 2,
+            "name": "read",
+            "startLine": 0,
+            "systemName": "read",
+          },
+        ],
+        "keepFrames": 0,
+        "locations": [
+          {
+            "column": 1,
+            "function": {
+              "filename": "",
+              "id": 1,
+              "name": "write",
+              "startLine": 0,
+              "systemName": "write",
+            },
+            "id": 1,
+            "line": 1,
+          },
+          {
+            "column": 1,
+            "function": {
+              "filename": "",
+              "id": 2,
+              "name": "read",
+              "startLine": 0,
+              "systemName": "read",
+            },
+            "id": 2,
+            "line": 2,
+          },
+        ],
+        "mappings": [],
+        "period": 10000000,
+        "periodType": {
+          "type": "wall-time",
+          "unit": "nanoseconds",
+        },
+        "sampleTypes": [
+          {
+            "type": "wall-time",
+            "unit": "nanoseconds",
+          },
+          {
+            "type": "long-task-time",
+            "unit": "nanoseconds",
+          },
+          {
+            "type": "sample",
+            "unit": "count",
+          },
+        ],
+        "samples": [
+          {
+            "label": [
+              {
+                "key": "task",
+                "str": "Inferred Task (999999999995)",
+              },
+              {
+                "key": "end_timestamp_ns",
+                "num": 1000000000000499968n,
+              },
+            ],
+            "locations": [
+              {
+                "column": 1,
+                "function": {
+                  "filename": "",
+                  "id": 1,
+                  "name": "write",
+                  "startLine": 0,
+                  "systemName": "write",
+                },
+                "id": 1,
+                "line": 1,
+              },
+              {
+                "column": 1,
+                "function": {
+                  "filename": "",
+                  "id": 2,
+                  "name": "read",
+                  "startLine": 0,
+                  "systemName": "read",
+                },
+                "id": 2,
+                "line": 2,
+              },
+            ],
+            "value": [
+              5500000,
+              0,
+              1,
+            ],
+          },
         ],
       }
     `);
