@@ -1587,7 +1587,7 @@ const baseProfile = {
 function buildPprof(i) {
   const e = new StringsTable(), t = [], n = [], r = [], o = new SamplesView(i), s = new LongTasksTimeline(i), l = new InferredTasksTimeline(i), u = new MeasuresTimeline(i), a = new EventsTimeline(i), f = new InteractionsTimeline(i), h = new NavigationTimeline(i);
   for (let m = 0; m < i.frames.length; m++) {
-    const v = i.frames[m], E = v.resourceId ? e.dedup(i.resources[v.resourceId]) : 0, R = e.dedup(v.name || ANONYMOUS_FUNCTION), L = R;
+    const v = i.frames[m], E = v.resourceId !== void 0 ? e.dedup(i.resources[v.resourceId]) : 0, R = e.dedup(v.name || ANONYMOUS_FUNCTION), L = R;
     let g = t.findIndex((T) => T.filename === E && T.name === R && T.systemName === L);
     g === -1 && (g = t.length, t.push(Function.fromPartial({
       id: t.length + 1,
