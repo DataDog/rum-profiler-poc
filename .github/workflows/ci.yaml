@@ -9,6 +9,8 @@ jobs:
         with:
           node-version: 20
       - run: yarn install
+      - run: yarn format
+      - run: git diff --exit-code
       - run: yarn build
       - run: git diff --exit-code
       - run: yarn test
