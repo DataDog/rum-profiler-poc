@@ -14,24 +14,25 @@ Express.js middleware example:
 
 ```javascript
 function jsProfilingDocumentPolicy(req, res, next) {
-  if (req.accepts("html")) {
+  if (req.accepts('html')) {
     // Add Document-Policy: js-profiling header if user requests HTML document
-    res.set("Document-Policy", "js-profiling");
+    res.set('Document-Policy', 'js-profiling')
   }
-  next();
+  next()
 }
-app.use(jsProfilingDocumentPolicy);
+app.use(jsProfilingDocumentPolicy)
 ```
 
 #### 2. Setup [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) script loading if needed
 
 This step is required only if your JavaScript files are served from a **different origin**. For example, an HTML document is served from `myapp.com`, and JavaScript files are served from `static.myapp.com`.
 
-If that's the case, you have to use [_cors_ script loading](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin); otherwise, these JavaScript files will be [invisible for the profiler](https://wicg.github.io/js-self-profiling/#cross-origin-script-contents). By default, your browser loads JavaScript in _no-cors_ mode. 
+If that's the case, you have to use [_cors_ script loading](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin); otherwise, these JavaScript files will be [invisible for the profiler](https://wicg.github.io/js-self-profiling/#cross-origin-script-contents). By default, your browser loads JavaScript in _no-cors_ mode.
 
 To opt-in for _cors_ mode, you have to:
- 1. Add `crossorigin="anonymous"` attribute to `<script />` tags
- 2. Ensure that JavaScript response includes the `Access-Control-Allow-Origin: *` HTTP header
+
+1.  Add `crossorigin="anonymous"` attribute to `<script />` tags
+2.  Ensure that JavaScript response includes the `Access-Control-Allow-Origin: *` HTTP header
 
 > [!CAUTION]
 > The `Access-Control-Allow-Origin` header is very important; without this header, **your browser will reject the script!**
@@ -40,8 +41,9 @@ To opt-in for _cors_ mode, you have to:
 
 > [!TIP]
 > For webpack users:
->  * You can set the [`output.crossOriginLoading: "anonymous"`](https://webpack.js.org/configuration/output/#outputcrossoriginloading) option.
->  * You can also modify the [`output.hashSalt`](https://webpack.js.org/configuration/output/#outputhashsalt) option when switching to the _cors_ mode to "invalidate" the browser cache.
+>
+> - You can set the [`output.crossOriginLoading: "anonymous"`](https://webpack.js.org/configuration/output/#outputcrossoriginloading) option.
+> - You can also modify the [`output.hashSalt`](https://webpack.js.org/configuration/output/#outputhashsalt) option when switching to the _cors_ mode to "invalidate" the browser cache.
 
 #### 3. Upload Source Maps to Datadog
 
@@ -75,15 +77,15 @@ yarn add @datadog/rum-profiler-poc@github:DataDog/rum-profiler-poc#{commit-hash}
 Import and call the `initRumProfiler()` function:
 
 ```typescript
-import { initRumProfiler } from "@datadog/rum-profiler-poc";
+import { initRumProfiler } from '@datadog/rum-profiler-poc'
 
 initRumProfiler({
-  applicationId: "my-application-id",
-  clientToken: "my-client-token", // you can re-use client token that you use for RUM/Logs
-  service: "my-service", // keep in sync with `--service` passed to datadog-ci sourcemaps upload command
-  version: "my-version", // keep in sync with `--release-version` passed to datadog-ci sourcemaps upload command
+  applicationId: 'my-application-id',
+  clientToken: 'my-client-token', // you can re-use client token that you use for RUM/Logs
+  service: 'my-service', // keep in sync with `--service` passed to datadog-ci sourcemaps upload command
+  version: 'my-version', // keep in sync with `--release-version` passed to datadog-ci sourcemaps upload command
   profilingSampleRate: 10, // run profiler for 10% of sessions
-});
+})
 ```
 
 #### 6. Check the setup

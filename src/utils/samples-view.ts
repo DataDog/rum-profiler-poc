@@ -1,4 +1,4 @@
-import type { RumProfilerTrace } from '../types';
+import type { RumProfilerTrace } from '../types'
 
 /**
  * This class is used to spread sampling bias between samples.
@@ -20,69 +20,50 @@ import type { RumProfilerTrace } from '../types';
  * This is useful when we want to corelate samples with other events.
  */
 export class SamplesView {
-    constructor(
-        private readonly trace: Pick<
-            RumProfilerTrace,
-            'samples' | 'sampleInterval'
-        >,
-    ) {}
+  constructor(private readonly trace: Pick<RumProfilerTrace, 'samples' | 'sampleInterval'>) {}
 
-    /**
-     * Get sample start time.
-     * /!\ It assumes a sample exists at given index.
-     *
-     * @param index Index of sample in samples array
-     * @returns Sample start time
-     */
-    getStartTime(index: number): number {
-        if (index === 0) {
-            // First sample - remove half of the interval
-            return (
-                this.trace.samples[index].timestamp -
-                this.trace.sampleInterval / 2
-            );
-        }
-
-        // Spread bias between samples
-        return (
-            (this.trace.samples[index - 1].timestamp +
-                this.trace.samples[index].timestamp) /
-            2
-        );
+  /**
+   * Get sample start time.
+   * /!\ It assumes a sample exists at given index.
+   *
+   * @param index Index of sample in samples array
+   * @returns Sample start time
+   */
+  getStartTime(index: number): number {
+    if (index === 0) {
+      // First sample - remove half of the interval
+      return this.trace.samples[index].timestamp - this.trace.sampleInterval / 2
     }
 
-    /**
-     * Get sample middle time.
-     * /!\ It assumes a sample exists at given index.
-     *
-     * @param index Index of sample in samples array
-     * @returns Sample middle time
-     */
-    getMiddleTime(index: number): number {
-        return this.trace.samples[index].timestamp;
+    // Spread bias between samples
+    return (this.trace.samples[index - 1].timestamp + this.trace.samples[index].timestamp) / 2
+  }
+
+  /**
+   * Get sample middle time.
+   * /!\ It assumes a sample exists at given index.
+   *
+   * @param index Index of sample in samples array
+   * @returns Sample middle time
+   */
+  getMiddleTime(index: number): number {
+    return this.trace.samples[index].timestamp
+  }
+
+  /**
+   * Get sample end time.
+   * /!\ It assumes a sample exists at given index.
+   *
+   * @param index Index of sample in samples array
+   * @returns Sample end time
+   */
+  getEndTime(index: number): number {
+    if (index === this.trace.samples.length - 1) {
+      // Last sample - add half of the interval
+      return this.trace.samples[index].timestamp + this.trace.sampleInterval / 2
     }
 
-    /**
-     * Get sample end time.
-     * /!\ It assumes a sample exists at given index.
-     *
-     * @param index Index of sample in samples array
-     * @returns Sample end time
-     */
-    getEndTime(index: number): number {
-        if (index === this.trace.samples.length - 1) {
-            // Last sample - add half of the interval
-            return (
-                this.trace.samples[index].timestamp +
-                this.trace.sampleInterval / 2
-            );
-        }
-
-        // Spread bias between samples
-        return (
-            (this.trace.samples[index].timestamp +
-                this.trace.samples[index + 1].timestamp) /
-            2
-        );
-    }
+    // Spread bias between samples
+    return (this.trace.samples[index].timestamp + this.trace.samples[index + 1].timestamp) / 2
+  }
 }

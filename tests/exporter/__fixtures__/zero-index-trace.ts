@@ -3,17 +3,17 @@ export const trace = {
     {
       column: 1,
       line: 1,
-      name: "write",
+      name: 'write',
       resourceId: 0,
     },
     {
       column: 1,
       line: 2,
-      name: "read",
+      name: 'read',
       resourceId: 0,
     },
   ],
-  resources: ["https://static.my-app.com/main.js"],
+  resources: ['https://static.my-app.com/main.js'],
   samples: [
     {
       timestamp: 0,
@@ -40,4 +40,4 @@ export const trace = {
   events: [],
   measures: [],
   longTasks: [],
-};
+}

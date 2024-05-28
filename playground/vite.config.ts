@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   server: {
     headers: {
-        'Document-Policy': 'js-profiling'
-    }
-  }
+      'Document-Policy': 'js-profiling',
+    },
+  },
 })

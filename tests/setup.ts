@@ -1,5 +1,5 @@
-import "blob-polyfill";
-import "isomorphic-fetch";
-import { TextEncoder, TextDecoder } from "util";
+import 'blob-polyfill'
+import 'isomorphic-fetch'
+import { TextEncoder, TextDecoder } from 'util'
 
-Object.assign(global, { TextDecoder, TextEncoder });
+Object.assign(global, { TextDecoder, TextEncoder })

@@ -3,12 +3,12 @@
  * @returns If we should sample
  */
 export function shouldSample(sampleRate: number): boolean {
-    if (sampleRate >= 100) {
-        return true;
-    }
-    if (sampleRate <= 0) {
-        return false;
-    }
+  if (sampleRate >= 100) {
+    return true
+  }
+  if (sampleRate <= 0) {
+    return false
+  }
 
-    return Math.random() <= sampleRate / 100;
+  return Math.random() <= sampleRate / 100
 }

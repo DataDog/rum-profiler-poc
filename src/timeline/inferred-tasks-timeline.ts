@@ -1,15 +1,15 @@
-import type { RumProfilerTrace } from '../types';
-import { SamplesView } from '../utils/samples-view';
+import type { RumProfilerTrace } from '../types'
+import { SamplesView } from '../utils/samples-view'
 
-import { Timeline } from './timeline';
+import { Timeline } from './timeline'
 
 /**
  * A task inferred from stack samples.
  */
 interface InferredTask {
-    readonly entryType: string;
-    readonly startTime: number;
-    readonly duration: number;
+  readonly entryType: string
+  readonly startTime: number
+  readonly duration: number
 }
 
 /**
@@ -34,64 +34,49 @@ interface InferredTask {
  * It's not 100% accurate because of sampling, but it should work most of the time.
  */
 export class InferredTasksTimeline extends Timeline<InferredTask> {
-    constructor(trace: RumProfilerTrace) {
-        const samplesView = new SamplesView(trace);
-        const inferredTasks: InferredTask[] = [];
+  constructor(trace: RumProfilerTrace) {
+    const samplesView = new SamplesView(trace)
+    const inferredTasks: InferredTask[] = []
 
-        if (trace.samples.length) {
-            let taskStartTimestamp: number | undefined;
-            let taskStackId: number | undefined;
+    if (trace.samples.length) {
+      let taskStartTimestamp: number | undefined
+      let taskStackId: number | undefined
 
-            for (
-                let sampleIndex = 0;
-                sampleIndex < trace.samples.length - 1;
-                sampleIndex++
-            ) {
-                const sample = trace.samples[sampleIndex];
+      for (let sampleIndex = 0; sampleIndex < trace.samples.length - 1; sampleIndex++) {
+        const sample = trace.samples[sampleIndex]
 
-                if (
-                    taskStartTimestamp !== undefined &&
-                    taskStackId !== undefined &&
-                    sample.stackId !== taskStackId
-                ) {
-                    // End the current task
-                    inferredTasks.push({
-                        entryType: 'inferred-task',
-                        startTime: taskStartTimestamp,
-                        duration:
-                            samplesView.getStartTime(sampleIndex) -
-                            taskStartTimestamp,
-                    });
-                    taskStartTimestamp = undefined;
-                    taskStackId = undefined;
-                }
-
-                if (
-                    taskStartTimestamp === undefined &&
-                    sample.stackId !== undefined
-                ) {
-                    // Start a new task
-                    taskStartTimestamp = samplesView.getStartTime(sampleIndex);
-                    taskStackId = sample.stackId;
-                }
-            }
-
-            if (taskStartTimestamp !== undefined && taskStackId !== undefined) {
-                // End the last task
-                inferredTasks.push({
-                    entryType: 'inferred-task',
-                    startTime: taskStartTimestamp,
-                    duration:
-                        samplesView.getEndTime(trace.samples.length - 1) -
-                        taskStartTimestamp,
-                });
-            }
+        if (taskStartTimestamp !== undefined && taskStackId !== undefined && sample.stackId !== taskStackId) {
+          // End the current task
+          inferredTasks.push({
+            entryType: 'inferred-task',
+            startTime: taskStartTimestamp,
+            duration: samplesView.getStartTime(sampleIndex) - taskStartTimestamp,
+          })
+          taskStartTimestamp = undefined
+          taskStackId = undefined
         }
 
-        super(
-            inferredTasks,
-            (entry) => entry.startTime,
-            (entry) => entry.startTime + entry.duration,
-        );
+        if (taskStartTimestamp === undefined && sample.stackId !== undefined) {
+          // Start a new task
+          taskStartTimestamp = samplesView.getStartTime(sampleIndex)
+          taskStackId = sample.stackId
+        }
+      }
+
+      if (taskStartTimestamp !== undefined && taskStackId !== undefined) {
+        // End the last task
+        inferredTasks.push({
+          entryType: 'inferred-task',
+          startTime: taskStartTimestamp,
+          duration: samplesView.getEndTime(trace.samples.length - 1) - taskStartTimestamp,
+        })
+      }
     }
+
+    super(
+      inferredTasks,
+      (entry) => entry.startTime,
+      (entry) => entry.startTime + entry.duration
+    )
+  }
 }
