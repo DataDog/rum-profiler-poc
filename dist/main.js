@@ -1614,8 +1614,8 @@ function buildPprof(i) {
       const v = i.samples[m], E = [];
       let R = v.stackId;
       for (; R !== void 0; ) {
-        const { frameId: c, parentId: F } = i.stacks[R];
-        E.push(n[c].id), R = F;
+        const { frameId: c, parentId: b } = i.stacks[R];
+        E.push(n[c].id), R = b;
       }
       if (E.length === 0)
         continue;
@@ -1657,10 +1657,10 @@ function buildPprof(i) {
         key: e.dedup("end_timestamp_ns"),
         num: (i.timeOrigin + T) * 1e6
       }));
-      const O = (T - L) * 1e6, C = w.length ? O : 0, b = 1;
+      const O = (T - L) * 1e6, C = w.length ? O : 0, N = 1;
       r.push(Sample.fromPartial({
         locationId: E,
-        value: [O, C, b],
+        value: [O, C, N],
         label: y
       }));
     }
@@ -1727,7 +1727,13 @@ function sendPprof(i, e, t, n) {
   }).then(() => {
   });
 }
-const window_Profiler = window.Profiler, window_navigation = window.navigation, SAMPLE_INTERVAL_MS = 10, COLLECT_INTERVAL_MS = 6e4, MIN_PROFILE_DURATION_MS = 5e3;
+function getNumberOfSamples(i) {
+  let e = 0;
+  for (const t of i)
+    t.stackId !== void 0 && e++;
+  return e;
+}
+const window_Profiler = window.Profiler, window_navigation = window.navigation, SAMPLE_INTERVAL_MS = 10, COLLECT_INTERVAL_MS = 6e4, MIN_PROFILE_DURATION_MS = 5e3, MIN_NUMBER_OF_SAMPLES = 50;
 class RumProfiler {
   constructor(e) {
     this.config = e, this.session = { state: "stopped" }, this.startNextProfilerSession = () => {
@@ -1754,7 +1760,7 @@ class RumProfiler {
       this.handleEntries(this.observer.takeRecords()), this.collectNavigationEntry();
       const { startTime: t, longTasks: n, measures: r, events: o, navigation: s } = this.session, l = this.session.profiler.stop().then((u) => {
         const a = performance.now();
-        if (!(a - t < MIN_PROFILE_DURATION_MS))
+        if (!(a - t < MIN_PROFILE_DURATION_MS) && !(getNumberOfSamples(u.samples) < MIN_NUMBER_OF_SAMPLES))
           return this.handleProfilerTrace(
             // Enrich trace with time and session data
             Object.assign(u, {

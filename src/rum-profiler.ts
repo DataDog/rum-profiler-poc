@@ -1,5 +1,6 @@
 import { exportToPprofIntake } from './exporter/export-to-pprof-intake'
 import type { RumProfilerTrace, RumProfilerSession, RumProfilerConfig, Profiler, Navigation } from './types'
+import { getNumberOfSamples } from './utils/get-number-of-samples'
 import { getRum } from './utils/get-rum'
 
 // These APIs might be unavailable in some browsers
@@ -9,6 +10,7 @@ const window_navigation: Navigation | undefined = (window as any).navigation
 const SAMPLE_INTERVAL_MS = 10 // Sample stack trace every 10ms
 const COLLECT_INTERVAL_MS = 60000 // Collect data every minute
 const MIN_PROFILE_DURATION_MS = 5000 // Require at least 5 seconds of profile data to reduce noise and cost
+const MIN_NUMBER_OF_SAMPLES = 50 // Require at least 50 samples (~500 ms) to report a profile to reduce noise and cost
 
 export class RumProfiler {
   private readonly observer: PerformanceObserver
@@ -102,6 +104,11 @@ export class RumProfiler {
 
       if (endTime - startTime < MIN_PROFILE_DURATION_MS) {
         // Skip very short profiles to reduce noise and cost
+        return
+      }
+
+      if (getNumberOfSamples(trace.samples) < MIN_NUMBER_OF_SAMPLES) {
+        // Skip idle profiles to reduce noise and cost
         return
       }
 
