@@ -31,7 +31,15 @@ export interface RumProfilerInitOptions {
      * Only tracked sessions send RUM profiles.
      */
     profilingSampleRate?: number;
+    /**
+     * The current commit hash of the application.
+     */
+    commitHash?: string;
+    /**
+     * The repository URL of the application.
+     */
+    repositoryUrl?: string;
 }
 type StopRumProfiler = () => Promise<void>;
-export declare function initRumProfiler({ applicationId, clientToken, service, version, env, site, profilingSampleRate, }: RumProfilerInitOptions): StopRumProfiler;
+export declare function initRumProfiler({ applicationId, clientToken, service, version, env, site, profilingSampleRate, commitHash, repositoryUrl, }: RumProfilerInitOptions): StopRumProfiler;
 export {};

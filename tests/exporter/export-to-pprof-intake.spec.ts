@@ -75,6 +75,8 @@ describe('exportToPprofIntake', () => {
         'family:chrome',
         'format:pprof',
         'host:mozilla/5.0_macintosh_intel_mac_os_x_10_15_7_applewebkit/537.36_khtml_like_gecko_',
+        'git.commit.sha:my-commit-hash',
+        'git.repository_url:https://my-repository-url',
       ].join(','),
       version: '4',
     })
