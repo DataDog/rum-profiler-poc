@@ -91,8 +91,8 @@ const Interval = class w {
   }
 }, RB_TREE_COLOR_RED = 0, RB_TREE_COLOR_BLACK = 1;
 class Node {
-  constructor(e = void 0, t = void 0, r = null, n = null, o = null, s = RB_TREE_COLOR_BLACK) {
-    this.left = r, this.right = n, this.parent = o, this.color = s, this.item = { key: e, value: t }, e && e instanceof Array && e.length == 2 && !Number.isNaN(e[0]) && !Number.isNaN(e[1]) && (this.item.key = new Interval(Math.min(e[0], e[1]), Math.max(e[0], e[1]))), this.max = this.item.key ? this.item.key.max : void 0;
+  constructor(e = void 0, t = void 0, n = null, r = null, o = null, s = RB_TREE_COLOR_BLACK) {
+    this.left = n, this.right = r, this.parent = o, this.color = s, this.item = { key: e, value: t }, e && e instanceof Array && e.length == 2 && !Number.isNaN(e[0]) && !Number.isNaN(e[1]) && (this.item.key = new Interval(Math.min(e[0], e[1]), Math.max(e[0], e[1]))), this.max = this.item.key ? this.item.key.max : void 0;
   }
   isNil() {
     return this.item.key === void 0 && this.item.value === void 0 && this.left === null && this.right === null && this.color === RB_TREE_COLOR_BLACK;
@@ -128,14 +128,14 @@ class Node {
   // Other_node does not intersect any node of left subtree, if this.left.max < other_node.item.key.low
   not_intersect_left_subtree(e) {
     const t = this.item.key.constructor.comparable_less_than;
-    let r = this.left.max.high !== void 0 ? this.left.max.high : this.left.max;
-    return t(r, e.item.key.low);
+    let n = this.left.max.high !== void 0 ? this.left.max.high : this.left.max;
+    return t(n, e.item.key.low);
   }
   // Other_node does not intersect right subtree if other_node.item.key.high < this.right.key.low
   not_intersect_right_subtree(e) {
     const t = this.item.key.constructor.comparable_less_than;
-    let r = this.right.max.low !== void 0 ? this.right.max.low : this.right.item.key.low;
-    return t(e.item.key.high, r);
+    let n = this.right.max.low !== void 0 ? this.right.max.low : this.right.item.key.low;
+    return t(e.item.key.high, n);
   }
 }
 class IntervalTree {
@@ -204,8 +204,8 @@ class IntervalTree {
   insert(e, t = e) {
     if (e === void 0)
       return;
-    let r = new Node(e, t, this.nil_node, this.nil_node, null, RB_TREE_COLOR_RED);
-    return this.tree_insert(r), this.recalc_max(r), r;
+    let n = new Node(e, t, this.nil_node, this.nil_node, null, RB_TREE_COLOR_RED);
+    return this.tree_insert(n), this.recalc_max(n), n;
   }
   /**
    * Returns true if item {key,value} exist in the tree
@@ -214,8 +214,8 @@ class IntervalTree {
    * @returns {boolean} true if item {key, value} exist in the tree, false otherwise
    */
   exist(e, t = e) {
-    let r = new Node(e, t);
-    return !!this.tree_search(this.root, r);
+    let n = new Node(e, t);
+    return !!this.tree_search(this.root, n);
   }
   /**
    * Remove entry {key, value} from the tree
@@ -224,8 +224,8 @@ class IntervalTree {
    * @returns {boolean} true if item {key, value} deleted, false if not found
    */
   remove(e, t = e) {
-    let r = new Node(e, t), n = this.tree_search(this.root, r);
-    return n && this.tree_delete(n), n;
+    let n = new Node(e, t), r = this.tree_search(this.root, n);
+    return r && this.tree_delete(r), r;
   }
   /**
    * Returns array of entry values which keys intersect with given interval <br/>
@@ -234,9 +234,9 @@ class IntervalTree {
    * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
    * @returns {Array}
    */
-  search(e, t = (r, n) => r === n ? n.output() : r) {
-    let r = new Node(e), n = [];
-    return this.tree_search_interval(this.root, r, n), n.map((o) => t(o.item.value, o.item.key));
+  search(e, t = (n, r) => n === r ? r.output() : n) {
+    let n = new Node(e), r = [];
+    return this.tree_search_interval(this.root, n, r), r.map((o) => t(o.item.value, o.item.key));
   }
   /**
    * Returns true if intersection between given and any interval stored in the tree found
@@ -261,17 +261,17 @@ class IntervalTree {
    */
   map(e) {
     const t = new IntervalTree();
-    return this.tree_walk(this.root, (r) => t.insert(r.item.key, e(r.item.value, r.item.key))), t;
+    return this.tree_walk(this.root, (n) => t.insert(n.item.key, e(n.item.value, n.item.key))), t;
   }
   /**
    * @param {Interval} interval - optional if the iterator is intended to start from the beginning
    * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
    * @returns {Iterator}
    */
-  *iterate(e, t = (r, n) => r === n ? n.output() : r) {
-    let r;
-    for (e ? r = this.tree_search_nearest_forward(this.root, new Node(e)) : this.root && (r = this.local_minimum(this.root)); r; )
-      yield t(r.item.value, r.item.key), r = this.tree_successor(r);
+  *iterate(e, t = (n, r) => n === r ? r.output() : n) {
+    let n;
+    for (e ? n = this.tree_search_nearest_forward(this.root, new Node(e)) : this.root && (n = this.local_minimum(this.root)); n; )
+      yield t(n.item.value, n.item.key), n = this.tree_successor(n);
   }
   recalc_max(e) {
     let t = e;
@@ -279,33 +279,33 @@ class IntervalTree {
       t.parent.update_max(), t = t.parent;
   }
   tree_insert(e) {
-    let t = this.root, r = null;
+    let t = this.root, n = null;
     if (this.root == null || this.root == this.nil_node)
       this.root = e;
     else {
       for (; t != this.nil_node; )
-        r = t, e.less_than(t) ? t = t.left : t = t.right;
-      e.parent = r, e.less_than(r) ? r.left = e : r.right = e;
+        n = t, e.less_than(t) ? t = t.left : t = t.right;
+      e.parent = n, e.less_than(n) ? n.left = e : n.right = e;
     }
     this.insert_fixup(e);
   }
   // After insertion insert_node may have red-colored parent, and this is a single possible violation
   // Go upwords to the root and re-color until violation will be resolved
   insert_fixup(e) {
-    let t, r;
+    let t, n;
     for (t = e; t != this.root && t.parent.color == RB_TREE_COLOR_RED; )
-      t.parent == t.parent.parent.left ? (r = t.parent.parent.right, r.color == RB_TREE_COLOR_RED ? (t.parent.color = RB_TREE_COLOR_BLACK, r.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, t = t.parent.parent) : (t == t.parent.right && (t = t.parent, this.rotate_left(t)), t.parent.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, this.rotate_right(t.parent.parent))) : (r = t.parent.parent.left, r.color == RB_TREE_COLOR_RED ? (t.parent.color = RB_TREE_COLOR_BLACK, r.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, t = t.parent.parent) : (t == t.parent.left && (t = t.parent, this.rotate_right(t)), t.parent.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, this.rotate_left(t.parent.parent)));
+      t.parent == t.parent.parent.left ? (n = t.parent.parent.right, n.color == RB_TREE_COLOR_RED ? (t.parent.color = RB_TREE_COLOR_BLACK, n.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, t = t.parent.parent) : (t == t.parent.right && (t = t.parent, this.rotate_left(t)), t.parent.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, this.rotate_right(t.parent.parent))) : (n = t.parent.parent.left, n.color == RB_TREE_COLOR_RED ? (t.parent.color = RB_TREE_COLOR_BLACK, n.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, t = t.parent.parent) : (t == t.parent.left && (t = t.parent, this.rotate_right(t)), t.parent.color = RB_TREE_COLOR_BLACK, t.parent.parent.color = RB_TREE_COLOR_RED, this.rotate_left(t.parent.parent)));
     this.root.color = RB_TREE_COLOR_BLACK;
   }
   tree_delete(e) {
-    let t, r;
-    e.left == this.nil_node || e.right == this.nil_node ? t = e : t = this.tree_successor(e), t.left != this.nil_node ? r = t.left : r = t.right, r.parent = t.parent, t == this.root ? this.root = r : (t == t.parent.left ? t.parent.left = r : t.parent.right = r, t.parent.update_max()), this.recalc_max(r), t != e && (e.copy_data(t), e.update_max(), this.recalc_max(e)), /*fix_node != this.nil_node && */
-    t.color == RB_TREE_COLOR_BLACK && this.delete_fixup(r);
+    let t, n;
+    e.left == this.nil_node || e.right == this.nil_node ? t = e : t = this.tree_successor(e), t.left != this.nil_node ? n = t.left : n = t.right, n.parent = t.parent, t == this.root ? this.root = n : (t == t.parent.left ? t.parent.left = n : t.parent.right = n, t.parent.update_max()), this.recalc_max(n), t != e && (e.copy_data(t), e.update_max(), this.recalc_max(e)), /*fix_node != this.nil_node && */
+    t.color == RB_TREE_COLOR_BLACK && this.delete_fixup(n);
   }
   delete_fixup(e) {
-    let t = e, r;
+    let t = e, n;
     for (; t != this.root && t.parent != null && t.color == RB_TREE_COLOR_BLACK; )
-      t == t.parent.left ? (r = t.parent.right, r.color == RB_TREE_COLOR_RED && (r.color = RB_TREE_COLOR_BLACK, t.parent.color = RB_TREE_COLOR_RED, this.rotate_left(t.parent), r = t.parent.right), r.left.color == RB_TREE_COLOR_BLACK && r.right.color == RB_TREE_COLOR_BLACK ? (r.color = RB_TREE_COLOR_RED, t = t.parent) : (r.right.color == RB_TREE_COLOR_BLACK && (r.color = RB_TREE_COLOR_RED, r.left.color = RB_TREE_COLOR_BLACK, this.rotate_right(r), r = t.parent.right), r.color = t.parent.color, t.parent.color = RB_TREE_COLOR_BLACK, r.right.color = RB_TREE_COLOR_BLACK, this.rotate_left(t.parent), t = this.root)) : (r = t.parent.left, r.color == RB_TREE_COLOR_RED && (r.color = RB_TREE_COLOR_BLACK, t.parent.color = RB_TREE_COLOR_RED, this.rotate_right(t.parent), r = t.parent.left), r.left.color == RB_TREE_COLOR_BLACK && r.right.color == RB_TREE_COLOR_BLACK ? (r.color = RB_TREE_COLOR_RED, t = t.parent) : (r.left.color == RB_TREE_COLOR_BLACK && (r.color = RB_TREE_COLOR_RED, r.right.color = RB_TREE_COLOR_BLACK, this.rotate_left(r), r = t.parent.left), r.color = t.parent.color, t.parent.color = RB_TREE_COLOR_BLACK, r.left.color = RB_TREE_COLOR_BLACK, this.rotate_right(t.parent), t = this.root));
+      t == t.parent.left ? (n = t.parent.right, n.color == RB_TREE_COLOR_RED && (n.color = RB_TREE_COLOR_BLACK, t.parent.color = RB_TREE_COLOR_RED, this.rotate_left(t.parent), n = t.parent.right), n.left.color == RB_TREE_COLOR_BLACK && n.right.color == RB_TREE_COLOR_BLACK ? (n.color = RB_TREE_COLOR_RED, t = t.parent) : (n.right.color == RB_TREE_COLOR_BLACK && (n.color = RB_TREE_COLOR_RED, n.left.color = RB_TREE_COLOR_BLACK, this.rotate_right(n), n = t.parent.right), n.color = t.parent.color, t.parent.color = RB_TREE_COLOR_BLACK, n.right.color = RB_TREE_COLOR_BLACK, this.rotate_left(t.parent), t = this.root)) : (n = t.parent.left, n.color == RB_TREE_COLOR_RED && (n.color = RB_TREE_COLOR_BLACK, t.parent.color = RB_TREE_COLOR_RED, this.rotate_right(t.parent), n = t.parent.left), n.left.color == RB_TREE_COLOR_BLACK && n.right.color == RB_TREE_COLOR_BLACK ? (n.color = RB_TREE_COLOR_RED, t = t.parent) : (n.left.color == RB_TREE_COLOR_BLACK && (n.color = RB_TREE_COLOR_RED, n.right.color = RB_TREE_COLOR_BLACK, this.rotate_left(n), n = t.parent.left), n.color = t.parent.color, t.parent.color = RB_TREE_COLOR_BLACK, n.left.color = RB_TREE_COLOR_BLACK, this.rotate_right(t.parent), t = this.root));
     t.color = RB_TREE_COLOR_BLACK;
   }
   tree_search(e, t) {
@@ -313,19 +313,19 @@ class IntervalTree {
       return t.equal_to(e) ? e : t.less_than(e) ? this.tree_search(e.left, t) : this.tree_search(e.right, t);
   }
   tree_search_nearest_forward(e, t) {
-    let r, n = e;
-    for (; n && n != this.nil_node; )
-      n.less_than(t) ? n.intersect(t) ? (r = n, n = n.left) : n = n.right : ((!r || n.less_than(r)) && (r = n), n = n.left);
-    return r || null;
+    let n, r = e;
+    for (; r && r != this.nil_node; )
+      r.less_than(t) ? r.intersect(t) ? (n = r, r = r.left) : r = r.right : ((!n || r.less_than(n)) && (n = r), r = r.left);
+    return n || null;
   }
   // Original search_interval method; container res support push() insertion
   // Search all intervals intersecting given one
-  tree_search_interval(e, t, r) {
-    e != null && e != this.nil_node && (e.left != this.nil_node && !e.not_intersect_left_subtree(t) && this.tree_search_interval(e.left, t, r), e.intersect(t) && r.push(e), e.right != this.nil_node && !e.not_intersect_right_subtree(t) && this.tree_search_interval(e.right, t, r));
+  tree_search_interval(e, t, n) {
+    e != null && e != this.nil_node && (e.left != this.nil_node && !e.not_intersect_left_subtree(t) && this.tree_search_interval(e.left, t, n), e.intersect(t) && n.push(e), e.right != this.nil_node && !e.not_intersect_right_subtree(t) && this.tree_search_interval(e.right, t, n));
   }
   tree_find_any_interval(e, t) {
-    let r = !1;
-    return e != null && e != this.nil_node && (e.left != this.nil_node && !e.not_intersect_left_subtree(t) && (r = this.tree_find_any_interval(e.left, t)), r || (r = e.intersect(t)), !r && e.right != this.nil_node && !e.not_intersect_right_subtree(t) && (r = this.tree_find_any_interval(e.right, t))), r;
+    let n = !1;
+    return e != null && e != this.nil_node && (e.left != this.nil_node && !e.not_intersect_left_subtree(t) && (n = this.tree_find_any_interval(e.left, t)), n || (n = e.intersect(t)), !n && e.right != this.nil_node && !e.not_intersect_right_subtree(t) && (n = this.tree_find_any_interval(e.right, t))), n;
   }
   local_minimum(e) {
     let t = e;
@@ -341,13 +341,13 @@ class IntervalTree {
     return t;
   }
   tree_successor(e) {
-    let t, r, n;
+    let t, n, r;
     if (e.right != this.nil_node)
       t = this.local_minimum(e.right);
     else {
-      for (r = e, n = e.parent; n != null && n.right == r; )
-        r = n, n = n.parent;
-      t = n;
+      for (n = e, r = e.parent; r != null && r.right == n; )
+        n = r, r = r.parent;
+      t = r;
     }
     return t;
   }
@@ -377,17 +377,17 @@ class IntervalTree {
   }
   /* Throw error if not every path from root to bottom has same black height */
   testBlackHeightProperty(e) {
-    let t = 0, r = 0, n = 0;
-    if (e.color == RB_TREE_COLOR_BLACK && t++, e.left != this.nil_node ? r = this.testBlackHeightProperty(e.left) : r = 1, e.right != this.nil_node ? n = this.testBlackHeightProperty(e.right) : n = 1, r != n)
+    let t = 0, n = 0, r = 0;
+    if (e.color == RB_TREE_COLOR_BLACK && t++, e.left != this.nil_node ? n = this.testBlackHeightProperty(e.left) : n = 1, e.right != this.nil_node ? r = this.testBlackHeightProperty(e.right) : r = 1, n != r)
       throw new Error("Red-black height property violated");
-    return t += r, t;
+    return t += n, t;
   }
 }
 class Timeline {
-  constructor(e, t, r) {
-    this.getStartTime = t, this.getEndTime = r, this.tree = new IntervalTree();
-    for (const n of e)
-      this.tree.insert([this.getStartTime(n), this.getEndTime(n)], n);
+  constructor(e, t, n) {
+    this.getStartTime = t, this.getEndTime = n, this.tree = new IntervalTree();
+    for (const r of e)
+      this.tree.insert([this.getStartTime(r), this.getEndTime(r)], r);
   }
   get(e) {
     return this.tree.search([e, e]);
@@ -400,7 +400,7 @@ class EventsTimeline extends Timeline {
 }
 class InteractionsTimeline extends Timeline {
   constructor(e) {
-    super(e.events.filter((t) => t.interactionId !== void 0).filter((t, r, n) => r === n.findIndex((o) => o.interactionId === t.interactionId)), (t) => t.startTime, (t) => t.startTime + t.duration);
+    super(e.events.filter((t) => t.interactionId !== void 0).filter((t, n, r) => n === r.findIndex((o) => o.interactionId === t.interactionId)), (t) => t.startTime, (t) => t.startTime + t.duration);
   }
 }
 class LongTasksTimeline extends Timeline {
@@ -417,6 +417,30 @@ class NavigationTimeline extends Timeline {
   constructor(e) {
     super(e.navigation, (t) => t.startTime, (t) => t.endTime);
   }
+}
+class LruCache {
+  constructor(e) {
+    this.values = /* @__PURE__ */ new Map(), this.maxEntries = e;
+  }
+  get(e) {
+    let t;
+    return this.values.has(e) && (t = this.values.get(e), this.values.delete(e), this.values.set(e, t)), t;
+  }
+  set(e, t) {
+    if (this.values.size >= this.maxEntries) {
+      const n = this.values.keys().next().value;
+      this.values.delete(n);
+    }
+    this.values.set(e, t);
+  }
+}
+const registry = new LruCache(2400);
+function getLongTaskId(i) {
+  const e = registry.get(i) || generateUUID();
+  return registry.set(i, e), e;
+}
+function generateUUID(i) {
+  return i ? (parseInt(i, 10) ^ Math.random() * 16 >> parseInt(i, 10) / 4).toString(16) : `10000000-1000-4000-8000-${1e11}`.replace(/[018]/g, generateUUID);
 }
 function getRum() {
   return window.DD_RUM;
@@ -498,17 +522,17 @@ function v4(i, e, t) {
   if (native.randomUUID && !e && !i)
     return native.randomUUID();
   i = i || {};
-  const r = i.random || (i.rng || rng)();
-  if (r[6] = r[6] & 15 | 64, r[8] = r[8] & 63 | 128, e) {
+  const n = i.random || (i.rng || rng)();
+  if (n[6] = n[6] & 15 | 64, n[8] = n[8] & 63 | 128, e) {
     t = t || 0;
-    for (let n = 0; n < 16; ++n)
-      e[t + n] = r[n];
+    for (let r = 0; r < 16; ++r)
+      e[t + r] = n[r];
     return e;
   }
-  return unsafeStringify(r);
+  return unsafeStringify(n);
 }
-function buildEndpoint(i, e, t, r, n) {
-  const o = `/api/v2/${t}`, s = buildEndpointHost(i), u = buildEndpointParameters(e, r, n);
+function buildEndpoint(i, e, t, n, r) {
+  const o = `/api/v2/${t}`, s = buildEndpointHost(i), u = buildEndpointParameters(e, n, r);
   return `https://${s}${o}?${u}`;
 }
 function buildEndpointHost(i) {
@@ -516,10 +540,10 @@ function buildEndpointHost(i) {
   return `browser-intake-${e.join("-")}.${t}`;
 }
 function buildEndpointParameters(i, e, t) {
-  const r = [`api:${t}`].concat(e);
+  const n = [`api:${t}`].concat(e);
   return [
     "ddsource=browser",
-    `ddtags=${encodeURIComponent(r.join(","))}`,
+    `ddtags=${encodeURIComponent(n.join(","))}`,
     `dd-api-key=${i}`,
     "dd-evp-origin=browser",
     `dd-request-id=${v4()}`
@@ -527,13 +551,13 @@ function buildEndpointParameters(i, e, t) {
 }
 var commonjsGlobal = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, indexMinimal = {}, minimal$1 = {}, aspromise = asPromise;
 function asPromise(i, e) {
-  for (var t = new Array(arguments.length - 1), r = 0, n = 2, o = !0; n < arguments.length; )
-    t[r++] = arguments[n++];
-  return new Promise(function(u, a) {
-    t[r] = function(f) {
+  for (var t = new Array(arguments.length - 1), n = 0, r = 2, o = !0; r < arguments.length; )
+    t[n++] = arguments[r++];
+  return new Promise(function(u, l) {
+    t[n] = function(f) {
       if (o)
         if (o = !1, f)
-          a(f);
+          l(f);
         else {
           for (var h = new Array(arguments.length - 1), d = 0; d < h.length; )
             h[d++] = arguments[d];
@@ -542,8 +566,8 @@ function asPromise(i, e) {
     };
     try {
       i.apply(e || null, t);
-    } catch (l) {
-      o && (o = !1, a(l));
+    } catch (a) {
+      o && (o = !1, l(a));
     }
   });
 }
@@ -551,18 +575,18 @@ var base64$1 = {};
 (function(i) {
   var e = i;
   e.length = function(u) {
-    var a = u.length;
-    if (!a)
+    var l = u.length;
+    if (!l)
       return 0;
-    for (var l = 0; --a % 4 > 1 && u.charAt(a) === "="; )
-      ++l;
-    return Math.ceil(u.length * 3) / 4 - l;
+    for (var a = 0; --l % 4 > 1 && u.charAt(l) === "="; )
+      ++a;
+    return Math.ceil(u.length * 3) / 4 - a;
   };
-  for (var t = new Array(64), r = new Array(123), n = 0; n < 64; )
-    r[t[n] = n < 26 ? n + 65 : n < 52 ? n + 71 : n < 62 ? n - 4 : n - 59 | 43] = n++;
-  e.encode = function(u, a, l) {
-    for (var f = null, h = [], d = 0, _ = 0, p; a < l; ) {
-      var c = u[a++];
+  for (var t = new Array(64), n = new Array(123), r = 0; r < 64; )
+    n[t[r] = r < 26 ? r + 65 : r < 52 ? r + 71 : r < 62 ? r - 4 : r - 59 | 43] = r++;
+  e.encode = function(u, l, a) {
+    for (var f = null, h = [], d = 0, _ = 0, p; l < a; ) {
+      var c = u[l++];
       switch (_) {
         case 0:
           h[d++] = t[c >> 2], p = (c & 3) << 4, _ = 1;
@@ -579,31 +603,31 @@ var base64$1 = {};
     return _ && (h[d++] = t[p], h[d++] = 61, _ === 1 && (h[d++] = 61)), f ? (d && f.push(String.fromCharCode.apply(String, h.slice(0, d))), f.join("")) : String.fromCharCode.apply(String, h.slice(0, d));
   };
   var o = "invalid encoding";
-  e.decode = function(u, a, l) {
-    for (var f = l, h = 0, d, _ = 0; _ < u.length; ) {
+  e.decode = function(u, l, a) {
+    for (var f = a, h = 0, d, _ = 0; _ < u.length; ) {
       var p = u.charCodeAt(_++);
       if (p === 61 && h > 1)
         break;
-      if ((p = r[p]) === void 0)
+      if ((p = n[p]) === void 0)
         throw Error(o);
       switch (h) {
         case 0:
           d = p, h = 1;
           break;
         case 1:
-          a[l++] = d << 2 | (p & 48) >> 4, d = p, h = 2;
+          l[a++] = d << 2 | (p & 48) >> 4, d = p, h = 2;
           break;
         case 2:
-          a[l++] = (d & 15) << 4 | (p & 60) >> 2, d = p, h = 3;
+          l[a++] = (d & 15) << 4 | (p & 60) >> 2, d = p, h = 3;
           break;
         case 3:
-          a[l++] = (d & 3) << 6 | p, h = 0;
+          l[a++] = (d & 3) << 6 | p, h = 0;
           break;
       }
     }
     if (h === 1)
       throw Error(o);
-    return l - f;
+    return a - f;
   }, e.test = function(u) {
     return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(u);
   };
@@ -612,10 +636,10 @@ var eventemitter = EventEmitter;
 function EventEmitter() {
   this._listeners = {};
 }
-EventEmitter.prototype.on = function(e, t, r) {
+EventEmitter.prototype.on = function(e, t, n) {
   return (this._listeners[e] || (this._listeners[e] = [])).push({
     fn: t,
-    ctx: r || this
+    ctx: n || this
   }), this;
 };
 EventEmitter.prototype.off = function(e, t) {
@@ -624,110 +648,110 @@ EventEmitter.prototype.off = function(e, t) {
   else if (t === void 0)
     this._listeners[e] = [];
   else
-    for (var r = this._listeners[e], n = 0; n < r.length; )
-      r[n].fn === t ? r.splice(n, 1) : ++n;
+    for (var n = this._listeners[e], r = 0; r < n.length; )
+      n[r].fn === t ? n.splice(r, 1) : ++r;
   return this;
 };
 EventEmitter.prototype.emit = function(e) {
   var t = this._listeners[e];
   if (t) {
-    for (var r = [], n = 1; n < arguments.length; )
-      r.push(arguments[n++]);
-    for (n = 0; n < t.length; )
-      t[n].fn.apply(t[n++].ctx, r);
+    for (var n = [], r = 1; r < arguments.length; )
+      n.push(arguments[r++]);
+    for (r = 0; r < t.length; )
+      t[r].fn.apply(t[r++].ctx, n);
   }
   return this;
 };
 var float = factory(factory);
 function factory(i) {
   return typeof Float32Array < "u" ? function() {
-    var e = new Float32Array([-0]), t = new Uint8Array(e.buffer), r = t[3] === 128;
-    function n(a, l, f) {
-      e[0] = a, l[f] = t[0], l[f + 1] = t[1], l[f + 2] = t[2], l[f + 3] = t[3];
+    var e = new Float32Array([-0]), t = new Uint8Array(e.buffer), n = t[3] === 128;
+    function r(l, a, f) {
+      e[0] = l, a[f] = t[0], a[f + 1] = t[1], a[f + 2] = t[2], a[f + 3] = t[3];
     }
-    function o(a, l, f) {
-      e[0] = a, l[f] = t[3], l[f + 1] = t[2], l[f + 2] = t[1], l[f + 3] = t[0];
+    function o(l, a, f) {
+      e[0] = l, a[f] = t[3], a[f + 1] = t[2], a[f + 2] = t[1], a[f + 3] = t[0];
     }
-    i.writeFloatLE = r ? n : o, i.writeFloatBE = r ? o : n;
-    function s(a, l) {
-      return t[0] = a[l], t[1] = a[l + 1], t[2] = a[l + 2], t[3] = a[l + 3], e[0];
+    i.writeFloatLE = n ? r : o, i.writeFloatBE = n ? o : r;
+    function s(l, a) {
+      return t[0] = l[a], t[1] = l[a + 1], t[2] = l[a + 2], t[3] = l[a + 3], e[0];
     }
-    function u(a, l) {
-      return t[3] = a[l], t[2] = a[l + 1], t[1] = a[l + 2], t[0] = a[l + 3], e[0];
+    function u(l, a) {
+      return t[3] = l[a], t[2] = l[a + 1], t[1] = l[a + 2], t[0] = l[a + 3], e[0];
     }
-    i.readFloatLE = r ? s : u, i.readFloatBE = r ? u : s;
+    i.readFloatLE = n ? s : u, i.readFloatBE = n ? u : s;
   }() : function() {
-    function e(r, n, o, s) {
-      var u = n < 0 ? 1 : 0;
-      if (u && (n = -n), n === 0)
-        r(1 / n > 0 ? (
+    function e(n, r, o, s) {
+      var u = r < 0 ? 1 : 0;
+      if (u && (r = -r), r === 0)
+        n(1 / r > 0 ? (
           /* positive */
           0
         ) : (
           /* negative 0 */
           2147483648
         ), o, s);
-      else if (isNaN(n))
-        r(2143289344, o, s);
-      else if (n > 34028234663852886e22)
-        r((u << 31 | 2139095040) >>> 0, o, s);
-      else if (n < 11754943508222875e-54)
-        r((u << 31 | Math.round(n / 1401298464324817e-60)) >>> 0, o, s);
+      else if (isNaN(r))
+        n(2143289344, o, s);
+      else if (r > 34028234663852886e22)
+        n((u << 31 | 2139095040) >>> 0, o, s);
+      else if (r < 11754943508222875e-54)
+        n((u << 31 | Math.round(r / 1401298464324817e-60)) >>> 0, o, s);
       else {
-        var a = Math.floor(Math.log(n) / Math.LN2), l = Math.round(n * Math.pow(2, -a) * 8388608) & 8388607;
-        r((u << 31 | a + 127 << 23 | l) >>> 0, o, s);
+        var l = Math.floor(Math.log(r) / Math.LN2), a = Math.round(r * Math.pow(2, -l) * 8388608) & 8388607;
+        n((u << 31 | l + 127 << 23 | a) >>> 0, o, s);
       }
     }
     i.writeFloatLE = e.bind(null, writeUintLE), i.writeFloatBE = e.bind(null, writeUintBE);
-    function t(r, n, o) {
-      var s = r(n, o), u = (s >> 31) * 2 + 1, a = s >>> 23 & 255, l = s & 8388607;
-      return a === 255 ? l ? NaN : u * (1 / 0) : a === 0 ? u * 1401298464324817e-60 * l : u * Math.pow(2, a - 150) * (l + 8388608);
+    function t(n, r, o) {
+      var s = n(r, o), u = (s >> 31) * 2 + 1, l = s >>> 23 & 255, a = s & 8388607;
+      return l === 255 ? a ? NaN : u * (1 / 0) : l === 0 ? u * 1401298464324817e-60 * a : u * Math.pow(2, l - 150) * (a + 8388608);
     }
     i.readFloatLE = t.bind(null, readUintLE), i.readFloatBE = t.bind(null, readUintBE);
   }(), typeof Float64Array < "u" ? function() {
-    var e = new Float64Array([-0]), t = new Uint8Array(e.buffer), r = t[7] === 128;
-    function n(a, l, f) {
-      e[0] = a, l[f] = t[0], l[f + 1] = t[1], l[f + 2] = t[2], l[f + 3] = t[3], l[f + 4] = t[4], l[f + 5] = t[5], l[f + 6] = t[6], l[f + 7] = t[7];
+    var e = new Float64Array([-0]), t = new Uint8Array(e.buffer), n = t[7] === 128;
+    function r(l, a, f) {
+      e[0] = l, a[f] = t[0], a[f + 1] = t[1], a[f + 2] = t[2], a[f + 3] = t[3], a[f + 4] = t[4], a[f + 5] = t[5], a[f + 6] = t[6], a[f + 7] = t[7];
     }
-    function o(a, l, f) {
-      e[0] = a, l[f] = t[7], l[f + 1] = t[6], l[f + 2] = t[5], l[f + 3] = t[4], l[f + 4] = t[3], l[f + 5] = t[2], l[f + 6] = t[1], l[f + 7] = t[0];
+    function o(l, a, f) {
+      e[0] = l, a[f] = t[7], a[f + 1] = t[6], a[f + 2] = t[5], a[f + 3] = t[4], a[f + 4] = t[3], a[f + 5] = t[2], a[f + 6] = t[1], a[f + 7] = t[0];
     }
-    i.writeDoubleLE = r ? n : o, i.writeDoubleBE = r ? o : n;
-    function s(a, l) {
-      return t[0] = a[l], t[1] = a[l + 1], t[2] = a[l + 2], t[3] = a[l + 3], t[4] = a[l + 4], t[5] = a[l + 5], t[6] = a[l + 6], t[7] = a[l + 7], e[0];
+    i.writeDoubleLE = n ? r : o, i.writeDoubleBE = n ? o : r;
+    function s(l, a) {
+      return t[0] = l[a], t[1] = l[a + 1], t[2] = l[a + 2], t[3] = l[a + 3], t[4] = l[a + 4], t[5] = l[a + 5], t[6] = l[a + 6], t[7] = l[a + 7], e[0];
     }
-    function u(a, l) {
-      return t[7] = a[l], t[6] = a[l + 1], t[5] = a[l + 2], t[4] = a[l + 3], t[3] = a[l + 4], t[2] = a[l + 5], t[1] = a[l + 6], t[0] = a[l + 7], e[0];
+    function u(l, a) {
+      return t[7] = l[a], t[6] = l[a + 1], t[5] = l[a + 2], t[4] = l[a + 3], t[3] = l[a + 4], t[2] = l[a + 5], t[1] = l[a + 6], t[0] = l[a + 7], e[0];
     }
-    i.readDoubleLE = r ? s : u, i.readDoubleBE = r ? u : s;
+    i.readDoubleLE = n ? s : u, i.readDoubleBE = n ? u : s;
   }() : function() {
-    function e(r, n, o, s, u, a) {
-      var l = s < 0 ? 1 : 0;
-      if (l && (s = -s), s === 0)
-        r(0, u, a + n), r(1 / s > 0 ? (
+    function e(n, r, o, s, u, l) {
+      var a = s < 0 ? 1 : 0;
+      if (a && (s = -s), s === 0)
+        n(0, u, l + r), n(1 / s > 0 ? (
           /* positive */
           0
         ) : (
           /* negative 0 */
           2147483648
-        ), u, a + o);
+        ), u, l + o);
       else if (isNaN(s))
-        r(0, u, a + n), r(2146959360, u, a + o);
+        n(0, u, l + r), n(2146959360, u, l + o);
       else if (s > 17976931348623157e292)
-        r(0, u, a + n), r((l << 31 | 2146435072) >>> 0, u, a + o);
+        n(0, u, l + r), n((a << 31 | 2146435072) >>> 0, u, l + o);
       else {
         var f;
         if (s < 22250738585072014e-324)
-          f = s / 5e-324, r(f >>> 0, u, a + n), r((l << 31 | f / 4294967296) >>> 0, u, a + o);
+          f = s / 5e-324, n(f >>> 0, u, l + r), n((a << 31 | f / 4294967296) >>> 0, u, l + o);
         else {
           var h = Math.floor(Math.log(s) / Math.LN2);
-          h === 1024 && (h = 1023), f = s * Math.pow(2, -h), r(f * 4503599627370496 >>> 0, u, a + n), r((l << 31 | h + 1023 << 20 | f * 1048576 & 1048575) >>> 0, u, a + o);
+          h === 1024 && (h = 1023), f = s * Math.pow(2, -h), n(f * 4503599627370496 >>> 0, u, l + r), n((a << 31 | h + 1023 << 20 | f * 1048576 & 1048575) >>> 0, u, l + o);
         }
       }
     }
     i.writeDoubleLE = e.bind(null, writeUintLE, 0, 4), i.writeDoubleBE = e.bind(null, writeUintBE, 4, 0);
-    function t(r, n, o, s, u) {
-      var a = r(s, u + n), l = r(s, u + o), f = (l >> 31) * 2 + 1, h = l >>> 20 & 2047, d = 4294967296 * (l & 1048575) + a;
+    function t(n, r, o, s, u) {
+      var l = n(s, u + r), a = n(s, u + o), f = (a >> 31) * 2 + 1, h = a >>> 20 & 2047, d = 4294967296 * (a & 1048575) + l;
       return h === 2047 ? d ? NaN : f * (1 / 0) : h === 0 ? f * 5e-324 * d : f * Math.pow(2, h - 1075) * (d + 4503599627370496);
     }
     i.readDoubleLE = t.bind(null, readUintLE, 0, 4), i.readDoubleBE = t.bind(null, readUintBE, 4, 0);
@@ -758,32 +782,32 @@ function inquire(moduleName) {
 var utf8$2 = {};
 (function(i) {
   var e = i;
-  e.length = function(r) {
-    for (var n = 0, o = 0, s = 0; s < r.length; ++s)
-      o = r.charCodeAt(s), o < 128 ? n += 1 : o < 2048 ? n += 2 : (o & 64512) === 55296 && (r.charCodeAt(s + 1) & 64512) === 56320 ? (++s, n += 4) : n += 3;
-    return n;
-  }, e.read = function(r, n, o) {
-    var s = o - n;
+  e.length = function(n) {
+    for (var r = 0, o = 0, s = 0; s < n.length; ++s)
+      o = n.charCodeAt(s), o < 128 ? r += 1 : o < 2048 ? r += 2 : (o & 64512) === 55296 && (n.charCodeAt(s + 1) & 64512) === 56320 ? (++s, r += 4) : r += 3;
+    return r;
+  }, e.read = function(n, r, o) {
+    var s = o - r;
     if (s < 1)
       return "";
-    for (var u = null, a = [], l = 0, f; n < o; )
-      f = r[n++], f < 128 ? a[l++] = f : f > 191 && f < 224 ? a[l++] = (f & 31) << 6 | r[n++] & 63 : f > 239 && f < 365 ? (f = ((f & 7) << 18 | (r[n++] & 63) << 12 | (r[n++] & 63) << 6 | r[n++] & 63) - 65536, a[l++] = 55296 + (f >> 10), a[l++] = 56320 + (f & 1023)) : a[l++] = (f & 15) << 12 | (r[n++] & 63) << 6 | r[n++] & 63, l > 8191 && ((u || (u = [])).push(String.fromCharCode.apply(String, a)), l = 0);
-    return u ? (l && u.push(String.fromCharCode.apply(String, a.slice(0, l))), u.join("")) : String.fromCharCode.apply(String, a.slice(0, l));
-  }, e.write = function(r, n, o) {
-    for (var s = o, u, a, l = 0; l < r.length; ++l)
-      u = r.charCodeAt(l), u < 128 ? n[o++] = u : u < 2048 ? (n[o++] = u >> 6 | 192, n[o++] = u & 63 | 128) : (u & 64512) === 55296 && ((a = r.charCodeAt(l + 1)) & 64512) === 56320 ? (u = 65536 + ((u & 1023) << 10) + (a & 1023), ++l, n[o++] = u >> 18 | 240, n[o++] = u >> 12 & 63 | 128, n[o++] = u >> 6 & 63 | 128, n[o++] = u & 63 | 128) : (n[o++] = u >> 12 | 224, n[o++] = u >> 6 & 63 | 128, n[o++] = u & 63 | 128);
+    for (var u = null, l = [], a = 0, f; r < o; )
+      f = n[r++], f < 128 ? l[a++] = f : f > 191 && f < 224 ? l[a++] = (f & 31) << 6 | n[r++] & 63 : f > 239 && f < 365 ? (f = ((f & 7) << 18 | (n[r++] & 63) << 12 | (n[r++] & 63) << 6 | n[r++] & 63) - 65536, l[a++] = 55296 + (f >> 10), l[a++] = 56320 + (f & 1023)) : l[a++] = (f & 15) << 12 | (n[r++] & 63) << 6 | n[r++] & 63, a > 8191 && ((u || (u = [])).push(String.fromCharCode.apply(String, l)), a = 0);
+    return u ? (a && u.push(String.fromCharCode.apply(String, l.slice(0, a))), u.join("")) : String.fromCharCode.apply(String, l.slice(0, a));
+  }, e.write = function(n, r, o) {
+    for (var s = o, u, l, a = 0; a < n.length; ++a)
+      u = n.charCodeAt(a), u < 128 ? r[o++] = u : u < 2048 ? (r[o++] = u >> 6 | 192, r[o++] = u & 63 | 128) : (u & 64512) === 55296 && ((l = n.charCodeAt(a + 1)) & 64512) === 56320 ? (u = 65536 + ((u & 1023) << 10) + (l & 1023), ++a, r[o++] = u >> 18 | 240, r[o++] = u >> 12 & 63 | 128, r[o++] = u >> 6 & 63 | 128, r[o++] = u & 63 | 128) : (r[o++] = u >> 12 | 224, r[o++] = u >> 6 & 63 | 128, r[o++] = u & 63 | 128);
     return o - s;
   };
 })(utf8$2);
 var pool_1 = pool;
 function pool(i, e, t) {
-  var r = t || 8192, n = r >>> 1, o = null, s = r;
-  return function(a) {
-    if (a < 1 || a > n)
-      return i(a);
-    s + a > r && (o = i(r), s = 0);
-    var l = e.call(o, s, s += a);
-    return s & 7 && (s = (s | 7) + 1), l;
+  var n = t || 8192, r = n >>> 1, o = null, s = n;
+  return function(l) {
+    if (l < 1 || l > r)
+      return i(l);
+    s + l > n && (o = i(n), s = 0);
+    var a = e.call(o, s, s += l);
+    return s & 7 && (s = (s | 7) + 1), a;
   };
 }
 var longbits, hasRequiredLongbits;
@@ -803,14 +827,14 @@ function requireLongbits() {
   }, t.length = function() {
     return 1;
   };
-  var r = e.zeroHash = "\0\0\0\0\0\0\0\0";
+  var n = e.zeroHash = "\0\0\0\0\0\0\0\0";
   e.fromNumber = function(s) {
     if (s === 0)
       return t;
     var u = s < 0;
     u && (s = -s);
-    var a = s >>> 0, l = (s - a) / 4294967296 >>> 0;
-    return u && (l = ~l >>> 0, a = ~a >>> 0, ++a > 4294967295 && (a = 0, ++l > 4294967295 && (l = 0))), new e(a, l);
+    var l = s >>> 0, a = (s - l) / 4294967296 >>> 0;
+    return u && (a = ~a >>> 0, l = ~l >>> 0, ++l > 4294967295 && (l = 0, ++a > 4294967295 && (a = 0))), new e(l, a);
   }, e.from = function(s) {
     if (typeof s == "number")
       return e.fromNumber(s);
@@ -822,18 +846,18 @@ function requireLongbits() {
     return s.low || s.high ? new e(s.low >>> 0, s.high >>> 0) : t;
   }, e.prototype.toNumber = function(s) {
     if (!s && this.hi >>> 31) {
-      var u = ~this.lo + 1 >>> 0, a = ~this.hi >>> 0;
-      return u || (a = a + 1 >>> 0), -(u + a * 4294967296);
+      var u = ~this.lo + 1 >>> 0, l = ~this.hi >>> 0;
+      return u || (l = l + 1 >>> 0), -(u + l * 4294967296);
     }
     return this.lo + this.hi * 4294967296;
   }, e.prototype.toLong = function(s) {
     return i.Long ? new i.Long(this.lo | 0, this.hi | 0, !!s) : { low: this.lo | 0, high: this.hi | 0, unsigned: !!s };
   };
-  var n = String.prototype.charCodeAt;
+  var r = String.prototype.charCodeAt;
   return e.fromHash = function(s) {
-    return s === r ? t : new e(
-      (n.call(s, 0) | n.call(s, 1) << 8 | n.call(s, 2) << 16 | n.call(s, 3) << 24) >>> 0,
-      (n.call(s, 4) | n.call(s, 5) << 8 | n.call(s, 6) << 16 | n.call(s, 7) << 24) >>> 0
+    return s === n ? t : new e(
+      (r.call(s, 0) | r.call(s, 1) << 8 | r.call(s, 2) << 16 | r.call(s, 3) << 24) >>> 0,
+      (r.call(s, 4) | r.call(s, 5) << 8 | r.call(s, 6) << 16 | r.call(s, 7) << 24) >>> 0
     );
   }, e.prototype.toHash = function() {
     return String.fromCharCode(
@@ -853,8 +877,8 @@ function requireLongbits() {
     var s = -(this.lo & 1);
     return this.lo = ((this.lo >>> 1 | this.hi << 31) ^ s) >>> 0, this.hi = (this.hi >>> 1 ^ s) >>> 0, this;
   }, e.prototype.length = function() {
-    var s = this.lo, u = (this.lo >>> 28 | this.hi << 4) >>> 0, a = this.hi >>> 24;
-    return a === 0 ? u === 0 ? s < 16384 ? s < 128 ? 1 : 2 : s < 2097152 ? 3 : 4 : u < 16384 ? u < 128 ? 5 : 6 : u < 2097152 ? 7 : 8 : a < 128 ? 9 : 10;
+    var s = this.lo, u = (this.lo >>> 28 | this.hi << 4) >>> 0, l = this.hi >>> 24;
+    return l === 0 ? u === 0 ? s < 16384 ? s < 128 ? 1 : 2 : s < 2097152 ? 3 : 4 : u < 16384 ? u < 128 ? 5 : 6 : u < 2097152 ? 7 : 8 : l < 128 ? 9 : 10;
   }, longbits;
 }
 var hasRequiredMinimal;
@@ -885,8 +909,8 @@ function requireMinimal() {
       return u != null && o.hasOwnProperty(s) ? typeof u != "object" || (Array.isArray(u) ? u.length : Object.keys(u).length) > 0 : !1;
     }, e.Buffer = function() {
       try {
-        var n = e.inquire("buffer").Buffer;
-        return n.prototype.utf8Write ? n : (
+        var r = e.inquire("buffer").Buffer;
+        return r.prototype.utf8Write ? r : (
           /* istanbul ignore next */
           null
         );
@@ -904,15 +928,15 @@ function requireMinimal() {
       var u = e.LongBits.fromHash(o);
       return e.Long ? e.Long.fromBits(u.lo, u.hi, s) : u.toNumber(!!s);
     };
-    function t(n, o, s) {
-      for (var u = Object.keys(o), a = 0; a < u.length; ++a)
-        (n[u[a]] === void 0 || !s) && (n[u[a]] = o[u[a]]);
-      return n;
+    function t(r, o, s) {
+      for (var u = Object.keys(o), l = 0; l < u.length; ++l)
+        (r[u[l]] === void 0 || !s) && (r[u[l]] = o[u[l]]);
+      return r;
     }
     e.merge = t, e.lcFirst = function(o) {
       return o.charAt(0).toLowerCase() + o.substring(1);
     };
-    function r(n) {
+    function n(r) {
       function o(s, u) {
         if (!(this instanceof o))
           return new o(s, u);
@@ -929,7 +953,7 @@ function requireMinimal() {
         },
         name: {
           get: function() {
-            return n;
+            return r;
           },
           set: void 0,
           enumerable: !1,
@@ -949,13 +973,13 @@ function requireMinimal() {
         }
       }), o;
     }
-    e.newError = r, e.ProtocolError = r("ProtocolError"), e.oneOfGetter = function(o) {
+    e.newError = n, e.ProtocolError = n("ProtocolError"), e.oneOfGetter = function(o) {
       for (var s = {}, u = 0; u < o.length; ++u)
         s[o[u]] = 1;
       return function() {
-        for (var a = Object.keys(this), l = a.length - 1; l > -1; --l)
-          if (s[a[l]] === 1 && this[a[l]] !== void 0 && this[a[l]] !== null)
-            return a[l];
+        for (var l = Object.keys(this), a = l.length - 1; a > -1; --a)
+          if (s[l[a]] === 1 && this[l[a]] !== void 0 && this[l[a]] !== null)
+            return l[a];
       };
     }, e.oneOfSetter = function(o) {
       return function(s) {
@@ -968,17 +992,17 @@ function requireMinimal() {
       bytes: String,
       json: !0
     }, e._configure = function() {
-      var n = e.Buffer;
-      if (!n) {
+      var r = e.Buffer;
+      if (!r) {
         e._Buffer_from = e._Buffer_allocUnsafe = null;
         return;
       }
-      e._Buffer_from = n.from !== Uint8Array.from && n.from || /* istanbul ignore next */
+      e._Buffer_from = r.from !== Uint8Array.from && r.from || /* istanbul ignore next */
       function(s, u) {
-        return new n(s, u);
-      }, e._Buffer_allocUnsafe = n.allocUnsafe || /* istanbul ignore next */
+        return new r(s, u);
+      }, e._Buffer_allocUnsafe = r.allocUnsafe || /* istanbul ignore next */
       function(s) {
-        return new n(s);
+        return new r(s);
       };
     };
   }(minimal$1)), minimal$1;
@@ -1009,8 +1033,8 @@ Writer$1.alloc = function i(e) {
   return new util$4.Array(e);
 };
 util$4.Array !== Array && (Writer$1.alloc = util$4.pool(Writer$1.alloc, util$4.Array.prototype.subarray));
-Writer$1.prototype._push = function i(e, t, r) {
-  return this.tail = this.tail.next = new Op(e, t, r), this.len += t, this;
+Writer$1.prototype._push = function i(e, t, n) {
+  return this.tail = this.tail.next = new Op(e, t, n), this.len += t, this;
 };
 function writeByte(i, e, t) {
   e[t] = i & 255;
@@ -1074,19 +1098,19 @@ Writer$1.prototype.float = function i(e) {
 Writer$1.prototype.double = function i(e) {
   return this._push(util$4.float.writeDoubleLE, 8, e);
 };
-var writeBytes = util$4.Array.prototype.set ? function i(e, t, r) {
-  t.set(e, r);
-} : function i(e, t, r) {
-  for (var n = 0; n < e.length; ++n)
-    t[r + n] = e[n];
+var writeBytes = util$4.Array.prototype.set ? function i(e, t, n) {
+  t.set(e, n);
+} : function i(e, t, n) {
+  for (var r = 0; r < e.length; ++r)
+    t[n + r] = e[r];
 };
 Writer$1.prototype.bytes = function i(e) {
   var t = e.length >>> 0;
   if (!t)
     return this._push(writeByte, 1, 0);
   if (util$4.isString(e)) {
-    var r = Writer$1.alloc(t = base64.length(e));
-    base64.decode(e, r, 0), e = r;
+    var n = Writer$1.alloc(t = base64.length(e));
+    base64.decode(e, n, 0), e = n;
   }
   return this.uint32(t)._push(writeBytes, t, e);
 };
@@ -1101,12 +1125,12 @@ Writer$1.prototype.reset = function i() {
   return this.states ? (this.head = this.states.head, this.tail = this.states.tail, this.len = this.states.len, this.states = this.states.next) : (this.head = this.tail = new Op(noop, 0, 0), this.len = 0), this;
 };
 Writer$1.prototype.ldelim = function i() {
-  var e = this.head, t = this.tail, r = this.len;
-  return this.reset().uint32(r), r && (this.tail.next = e.next, this.tail = t, this.len += r), this;
+  var e = this.head, t = this.tail, n = this.len;
+  return this.reset().uint32(n), n && (this.tail.next = e.next, this.tail = t, this.len += n), this;
 };
 Writer$1.prototype.finish = function i() {
-  for (var e = this.head.next, t = this.constructor.alloc(this.len), r = 0; e; )
-    e.fn(e.val, t, r), r += e.len, e = e.next;
+  for (var e = this.head.next, t = this.constructor.alloc(this.len), n = 0; e; )
+    e.fn(e.val, t, n), n += e.len, e = e.next;
   return t;
 };
 Writer$1._configure = function(i) {
@@ -1119,14 +1143,14 @@ function BufferWriter() {
   Writer.call(this);
 }
 BufferWriter._configure = function() {
-  BufferWriter.alloc = util$3._Buffer_allocUnsafe, BufferWriter.writeBytesBuffer = util$3.Buffer && util$3.Buffer.prototype instanceof Uint8Array && util$3.Buffer.prototype.set.name === "set" ? function(e, t, r) {
-    t.set(e, r);
-  } : function(e, t, r) {
+  BufferWriter.alloc = util$3._Buffer_allocUnsafe, BufferWriter.writeBytesBuffer = util$3.Buffer && util$3.Buffer.prototype instanceof Uint8Array && util$3.Buffer.prototype.set.name === "set" ? function(e, t, n) {
+    t.set(e, n);
+  } : function(e, t, n) {
     if (e.copy)
-      e.copy(t, r, 0, e.length);
+      e.copy(t, n, 0, e.length);
     else
-      for (var n = 0; n < e.length; )
-        t[r++] = e[n++];
+      for (var r = 0; r < e.length; )
+        t[n++] = e[r++];
   };
 };
 BufferWriter.prototype.bytes = function i(e) {
@@ -1159,8 +1183,8 @@ var create_array = typeof Uint8Array < "u" ? function i(e) {
   throw Error("illegal buffer");
 }, create = function i() {
   return util$2.Buffer ? function(t) {
-    return (Reader$1.create = function(n) {
-      return util$2.Buffer.isBuffer(n) ? new BufferReader$1(n) : create_array(n);
+    return (Reader$1.create = function(r) {
+      return util$2.Buffer.isBuffer(r) ? new BufferReader$1(r) : create_array(r);
     })(t);
   } : create_array;
 };
@@ -1249,16 +1273,16 @@ Reader$1.prototype.double = function i() {
   return this.pos += 8, e;
 };
 Reader$1.prototype.bytes = function i() {
-  var e = this.uint32(), t = this.pos, r = this.pos + e;
-  if (r > this.len)
+  var e = this.uint32(), t = this.pos, n = this.pos + e;
+  if (n > this.len)
     throw indexOutOfRange(this, e);
   if (this.pos += e, Array.isArray(this.buf))
-    return this.buf.slice(t, r);
-  if (t === r) {
-    var n = util$2.Buffer;
-    return n ? n.alloc(0) : new this.buf.constructor(0);
+    return this.buf.slice(t, n);
+  if (t === n) {
+    var r = util$2.Buffer;
+    return r ? r.alloc(0) : new this.buf.constructor(0);
   }
-  return this._slice.call(this.buf, t, r);
+  return this._slice.call(this.buf, t, n);
 };
 Reader$1.prototype.string = function i() {
   var e = this.bytes();
@@ -1344,12 +1368,12 @@ function Service(i, e, t) {
     throw TypeError("rpcImpl must be a function");
   util.EventEmitter.call(this), this.rpcImpl = i, this.requestDelimited = !!e, this.responseDelimited = !!t;
 }
-Service.prototype.rpcCall = function i(e, t, r, n, o) {
-  if (!n)
+Service.prototype.rpcCall = function i(e, t, n, r, o) {
+  if (!r)
     throw TypeError("request must be specified");
   var s = this;
   if (!o)
-    return util.asPromise(i, s, e, t, r, n);
+    return util.asPromise(i, s, e, t, n, r);
   if (!s.rpcImpl) {
     setTimeout(function() {
       o(Error("already ended"));
@@ -1359,24 +1383,24 @@ Service.prototype.rpcCall = function i(e, t, r, n, o) {
   try {
     return s.rpcImpl(
       e,
-      t[s.requestDelimited ? "encodeDelimited" : "encode"](n).finish(),
-      function(a, l) {
-        if (a)
-          return s.emit("error", a, e), o(a);
-        if (l === null) {
+      t[s.requestDelimited ? "encodeDelimited" : "encode"](r).finish(),
+      function(l, a) {
+        if (l)
+          return s.emit("error", l, e), o(l);
+        if (a === null) {
           s.end(
             /* endedByRPC */
             !0
           );
           return;
         }
-        if (!(l instanceof r))
+        if (!(a instanceof n))
           try {
-            l = r[s.responseDelimited ? "decodeDelimited" : "decode"](l);
+            a = n[s.responseDelimited ? "decodeDelimited" : "decode"](a);
           } catch (f) {
             return s.emit("error", f, e), o(f);
           }
-        return s.emit("data", l, e), o(null, l);
+        return s.emit("data", a, e), o(null, a);
       }
     );
   } catch (u) {
@@ -1559,11 +1583,11 @@ const baseProfile = {
     return i.id !== void 0 && i.id !== null ? e.id = i.id : e.id = 0, i.name !== void 0 && i.name !== null ? e.name = i.name : e.name = 0, i.systemName !== void 0 && i.systemName !== null ? e.systemName = i.systemName : e.systemName = 0, i.filename !== void 0 && i.filename !== null ? e.filename = i.filename : e.filename = 0, i.startLine !== void 0 && i.startLine !== null ? e.startLine = i.startLine : e.startLine = 0, e;
   }
 }, ANONYMOUS_FUNCTION = "(anonymous)", exportToPprofIntake = (i, e) => {
-  const t = buildPprof(i);
-  return sendPprof(new Date(i.timeOrigin + i.startTime), new Date(i.timeOrigin + i.endTime), t, e);
+  const t = buildPprof(i), n = extractAttributes(i, e);
+  return sendPprof(new Date(i.timeOrigin + i.startTime), new Date(i.timeOrigin + i.endTime), t, e, n);
 };
 function buildPprof(i) {
-  const e = new StringsTable(), t = [], r = [], n = [], o = new SamplesView(i), s = new LongTasksTimeline(i), u = new MeasuresTimeline(i), a = new EventsTimeline(i), l = new InteractionsTimeline(i), f = new NavigationTimeline(i);
+  const e = new StringsTable(), t = [], n = [], r = [], o = new SamplesView(i), s = new LongTasksTimeline(i), u = new MeasuresTimeline(i), l = new EventsTimeline(i), a = new InteractionsTimeline(i), f = new NavigationTimeline(i);
   for (let p = 0; p < i.frames.length; p++) {
     const c = i.frames[p], R = c.resourceId !== void 0 ? e.dedup(i.resources[c.resourceId]) : 0, v = e.dedup(c.name || ANONYMOUS_FUNCTION), L = v;
     let g = t.findIndex((E) => E.filename === R && E.name === v && E.systemName === L);
@@ -1572,8 +1596,8 @@ function buildPprof(i) {
       filename: R,
       name: v,
       systemName: L
-    }))), r.push(Location.fromPartial({
-      id: r.length + 1,
+    }))), n.push(Location.fromPartial({
+      id: n.length + 1,
       line: [
         Line.fromPartial({
           functionId: t[g].id,
@@ -1593,16 +1617,16 @@ function buildPprof(i) {
       let v = c.stackId;
       for (; v !== void 0; ) {
         const { frameId: m, parentId: C } = i.stacks[v];
-        R.push(r[m].id), v = C;
+        R.push(n[m].id), v = C;
       }
       if (R.length === 0)
         continue;
-      const L = o.getStartTime(p), g = o.getMiddleTime(p), E = o.getEndTime(p), T = s.get(g), O = u.get(g), $ = a.get(g), k = l.get(g), S = f.get(g), y = [];
+      const L = o.getStartTime(p), g = o.getMiddleTime(p), E = o.getEndTime(p), T = s.get(g), O = u.get(g), $ = l.get(g), k = a.get(g), S = f.get(g), y = [];
       if (T.length > 0)
         for (const m of T)
           y.push(Label.fromPartial({
             key: e.dedup("task"),
-            str: e.dedup(`Long Task (${Math.round(i.timeOrigin + m.startTime)})`)
+            str: e.dedup(`Long Task (${getLongTaskId(m)})`)
           }));
       else
         y.push(Label.fromPartial({
@@ -1636,7 +1660,7 @@ function buildPprof(i) {
         num: (i.timeOrigin + E) * 1e6
       }));
       const B = (E - L) * 1e6, x = T.length ? B : 0, I = 1;
-      n.push(Sample.fromPartial({
+      r.push(Sample.fromPartial({
         locationId: R,
         value: [B, x, I],
         label: y
@@ -1666,21 +1690,39 @@ function buildPprof(i) {
     durationNanos: (i.endTime - i.startTime) * 1e6,
     timeNanos: (i.timeOrigin + i.startTime) * 1e6,
     function: t,
-    location: r,
-    sample: n,
+    location: n,
+    sample: r,
     stringTable: Array.from(e)
   });
   return new Blob([Profile.encode(_).finish()], {
     type: "application/octet-stream"
   });
 }
-function sendPprof(i, e, t, r) {
-  var f, h;
-  const n = [
-    `service:${r.service}`,
-    `version:${r.version}`,
-    `env:${r.env || "unknown"}`,
-    `application_id:${r.applicationId}`,
+function extractAttributes(i, e) {
+  var s, u;
+  const t = {
+    application: {
+      id: e.applicationId
+    }
+  }, n = (u = (s = getRum()) == null ? void 0 : s.getInternalContext()) == null ? void 0 : u.session_id;
+  n && (t.session = {
+    id: n
+  });
+  const r = Array.from(new Set(i.navigation.map((l) => l.name)));
+  r.length && (t.view = {
+    name: r
+  });
+  const o = i.longTasks.map((l) => getLongTaskId(l));
+  return o.length && (t.context = {
+    profile_long_task_id: o
+  }), t;
+}
+function sendPprof(i, e, t, n, r = {}) {
+  const o = [
+    `service:${n.service}`,
+    `version:${n.version}`,
+    `env:${n.env || "unknown"}`,
+    `application_id:${n.applicationId}`,
     "language:javascript",
     "runtime:chrome",
     "family:chrome",
@@ -1688,20 +1730,18 @@ function sendPprof(i, e, t, r) {
     // TODO: replace with RUM device id in the future
     `host:${navigator.userAgent.replace(/[^a-zA-Z0-9_\-:./]/g, "_").replace(/__/g, "_").toLowerCase().slice(0, 200)}`
   ];
-  r.commitHash && n.push(`git.commit.sha:${r.commitHash}`), r.repositoryUrl && n.push(`git.repository_url:${r.repositoryUrl}`);
-  const o = (h = (f = getRum()) == null ? void 0 : f.getInternalContext()) == null ? void 0 : h.session_id;
-  o && n.push(`session_id:${o}`);
+  n.commitHash && o.push(`git.commit.sha:${n.commitHash}`), n.repositoryUrl && o.push(`git.repository_url:${n.repositoryUrl}`);
   const s = {
+    ...r,
     attachments: ["wall-time.pprof"],
     start: i.toISOString(),
     end: e.toISOString(),
     family: "chrome",
-    tags_profiler: n.join(","),
-    version: "4"
+    tags_profiler: o.join(",")
   }, u = new FormData();
   u.append("event", new Blob([JSON.stringify(s)], { type: "application/json" }), "event.json"), u.append("wall-time.pprof", t, "wall-time.pprof");
-  const a = (d) => buildEndpoint(r.site, r.clientToken, "profile", [], d);
-  return navigator.sendBeacon(a("beacon"), u) ? Promise.resolve() : fetch(a("fetch"), {
+  const l = (f) => buildEndpoint(n.site, n.clientToken, "profile", [], f);
+  return navigator.sendBeacon(l("beacon"), u) ? Promise.resolve() : fetch(l("fetch"), {
     method: "POST",
     body: u
   }).then(() => {
@@ -1738,17 +1778,17 @@ class RumProfiler {
       if (this.session.state !== "running")
         return Promise.resolve();
       this.handleEntries(this.observer.takeRecords()), this.collectNavigationEntry();
-      const { startTime: t, longTasks: r, measures: n, events: o, navigation: s } = this.session, u = this.session.profiler.stop().then((a) => {
-        const l = performance.now();
-        if (!(l - t < MIN_PROFILE_DURATION_MS) && !(getNumberOfSamples(a.samples) < MIN_NUMBER_OF_SAMPLES))
+      const { startTime: t, longTasks: n, measures: r, events: o, navigation: s } = this.session, u = this.session.profiler.stop().then((l) => {
+        const a = performance.now();
+        if (!(a - t < MIN_PROFILE_DURATION_MS) && !(getNumberOfSamples(l.samples) < MIN_NUMBER_OF_SAMPLES))
           return this.handleProfilerTrace(
             // Enrich trace with time and session data
-            Object.assign(a, {
+            Object.assign(l, {
               startTime: t,
-              endTime: l,
+              endTime: a,
               timeOrigin: performance.timeOrigin,
-              longTasks: r,
-              measures: n,
+              longTasks: n,
+              measures: r,
               events: o,
               navigation: s,
               sampleInterval: SAMPLE_INTERVAL_MS
@@ -1759,39 +1799,39 @@ class RumProfiler {
     }, this.stopProfilerSession = (t) => {
       if (this.session.state !== "running")
         return Promise.resolve();
-      const r = this.collectProfilerSession();
-      return this.session = { state: t }, r;
+      const n = this.collectProfilerSession();
+      return this.session = { state: t }, n;
     }, this.collectNavigationEntry = () => {
-      var r, n, o;
+      var n, r, o;
       if (this.session.state !== "running")
         return;
       const t = this.session;
       t.navigation.push({
         startTime: t.navigation.length ? t.navigation[t.navigation.length - 1].endTime : 0,
         endTime: performance.now(),
-        name: ((o = (n = (r = getRum()) == null ? void 0 : r.getInternalContext()) == null ? void 0 : n.view) == null ? void 0 : o.name) || document.location.pathname
+        name: ((o = (r = (n = getRum()) == null ? void 0 : n.getInternalContext()) == null ? void 0 : r.view) == null ? void 0 : o.name) || document.location.pathname
       });
     }, this.handleProfilerTrace = (t) => {
       performance.mark("rum.profiler.export_time_ms.start");
-      const r = exportToPprofIntake(t, this.config);
-      return performance.mark("rum.profiler.export_time_ms.end"), performance.measure("rum.profiler.export_time_ms", "rum.profiler.export_time_ms.start", "rum.profiler.export_time_ms.end"), r;
+      const n = exportToPprofIntake(t, this.config);
+      return performance.mark("rum.profiler.export_time_ms.end"), performance.measure("rum.profiler.export_time_ms", "rum.profiler.export_time_ms.start", "rum.profiler.export_time_ms.end"), n;
     }, this.handleSampleBufferFull = () => {
       this.startNextProfilerSession();
     }, this.handlePerformance = (t) => {
       this.handleEntries(t.getEntries());
     }, this.handleEntries = (t) => {
       if (this.session.state === "running") {
-        for (const r of t)
-          if (!(r.duration < SAMPLE_INTERVAL_MS))
-            switch (r.entryType) {
+        for (const n of t)
+          if (!(n.duration < SAMPLE_INTERVAL_MS))
+            switch (n.entryType) {
               case "longtask":
-                this.session.longTasks.push(r);
+                this.session.longTasks.push(n);
                 break;
               case "measure":
-                this.session.measures.push(r);
+                this.session.measures.push(n);
                 break;
               case "event":
-                this.session.events.push(r);
+                this.session.events.push(n);
                 break;
             }
       }
@@ -1818,22 +1858,26 @@ function shouldSample(i) {
   return i >= 100 ? !0 : i <= 0 ? !1 : Math.random() <= i / 100;
 }
 const DEFAULT_INTAKE = "datadoghq.com", DEFAULT_PROFILING_SAMPLE_RATE = 100;
-function initRumProfiler({ applicationId: i, clientToken: e, service: t, version: r, env: n, site: o = DEFAULT_INTAKE, profilingSampleRate: s = DEFAULT_PROFILING_SAMPLE_RATE, commitHash: u, repositoryUrl: a }) {
+function initRumProfiler({ applicationId: i, clientToken: e, service: t, version: n, env: r, site: o = DEFAULT_INTAKE, profilingSampleRate: s = DEFAULT_PROFILING_SAMPLE_RATE, commitHash: u, repositoryUrl: l }) {
   if (shouldSample(s)) {
-    const l = new RumProfiler({
+    const a = new RumProfiler({
       applicationId: i,
       clientToken: e,
       service: t,
-      version: r,
-      env: n,
+      version: n,
+      env: r,
       site: o,
       commitHash: u,
-      repositoryUrl: a
+      repositoryUrl: l
     });
-    return l.start(), () => l.stop();
+    return a.start(), () => a.stop();
   }
   return () => Promise.resolve();
 }
+function beforeSend(i, e) {
+  return i.type === "long_task" && (i.context || (i.context = {}), i.context.profile_long_task_id = getLongTaskId(e.performanceEntry)), !0;
+}
 export {
+  beforeSend,
   initRumProfiler
 };

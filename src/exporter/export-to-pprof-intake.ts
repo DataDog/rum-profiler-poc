@@ -4,6 +4,7 @@ import { LongTasksTimeline } from '../timeline/long-tasks-timeline'
 import { MeasuresTimeline } from '../timeline/measures-timeline'
 import { NavigationTimeline } from '../timeline/navigation-timeline'
 import type { RumProfilerTraceExporter, RumProfilerTrace, RumProfilerConfig } from '../types'
+import { getLongTaskId } from '../utils/get-long-task-id'
 import { getRum } from '../utils/get-rum'
 import { SamplesView } from '../utils/samples-view'
 import { StringsTable } from '../utils/strings-table'
@@ -21,12 +22,14 @@ const ANONYMOUS_FUNCTION = '(anonymous)'
  */
 export const exportToPprofIntake: RumProfilerTraceExporter = (trace, config): Promise<void> => {
   const pprof = buildPprof(trace)
+  const attributes = extractAttributes(trace, config)
 
   return sendPprof(
     new Date(trace.timeOrigin + trace.startTime),
     new Date(trace.timeOrigin + trace.endTime),
     pprof,
-    config
+    config,
+    attributes
   )
 }
 
@@ -133,7 +136,7 @@ function buildPprof(trace: RumProfilerTrace): Blob {
           labels.push(
             Label.fromPartial({
               key: stringsTable.dedup('task'),
-              str: stringsTable.dedup(`Long Task (${Math.round(trace.timeOrigin + longTask.startTime)})`),
+              str: stringsTable.dedup(`Long Task (${getLongTaskId(longTask)})`),
             })
           )
         }
@@ -241,6 +244,39 @@ function buildPprof(trace: RumProfilerTrace): Blob {
 }
 
 /**
+ * Extract additional attributes from the trace.
+ * @param trace Profiler trace
+ * @param config Configuration of the profiler
+ * @returns Additional attributes
+ */
+function extractAttributes(trace: RumProfilerTrace, config: RumProfilerConfig): Record<string, unknown> {
+  const attributes: Record<string, unknown> = {
+    application: {
+      id: config.applicationId,
+    },
+  }
+  const sessionId = getRum()?.getInternalContext()?.session_id
+  if (sessionId) {
+    attributes.session = {
+      id: sessionId,
+    }
+  }
+  const viewNames = Array.from(new Set(trace.navigation.map((entry) => entry.name)))
+  if (viewNames.length) {
+    attributes.view = {
+      name: viewNames,
+    }
+  }
+  const longTaskIds = trace.longTasks.map((longTask) => getLongTaskId(longTask))
+  if (longTaskIds.length) {
+    attributes.context = {
+      profile_long_task_id: longTaskIds,
+    }
+  }
+  return attributes
+}
+
+/**
  * Sends pprof profile to public profiling intake.
  *
  * @param start Start of the profile
@@ -249,7 +285,13 @@ function buildPprof(trace: RumProfilerTrace): Blob {
  * @param config Configuration of the profiler
  * @returns Promise that resolves when profile is sent
  */
-function sendPprof(start: Date, end: Date, pprof: Blob, config: RumProfilerConfig): Promise<void> {
+function sendPprof(
+  start: Date,
+  end: Date,
+  pprof: Blob,
+  config: RumProfilerConfig,
+  attributes: Record<string, unknown> = {}
+): Promise<void> {
   const eventTags = [
     `service:${config.service}`,
     `version:${config.version}`,
@@ -272,18 +314,14 @@ function sendPprof(start: Date, end: Date, pprof: Blob, config: RumProfilerConfi
   if (config.repositoryUrl) {
     eventTags.push(`git.repository_url:${config.repositoryUrl}`)
   }
-  const sessionId = getRum()?.getInternalContext()?.session_id
-  if (sessionId) {
-    eventTags.push(`session_id:${sessionId}`)
-  }
 
   const event = {
+    ...attributes,
     attachments: ['wall-time.pprof'],
     start: start.toISOString(),
     end: end.toISOString(),
     family: 'chrome',
     tags_profiler: eventTags.join(','),
-    version: '4',
   }
 
   const formData = new FormData()
