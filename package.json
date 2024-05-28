@@ -19,7 +19,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "playground": "cd playground && yarn install && yarn dev",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.5",
