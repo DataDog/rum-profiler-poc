@@ -1,10 +1,10 @@
-import React from "react";
-import { computeHeavyThings } from "../computeHeavyThings";
+import React from 'react'
+import { computeHeavyThings } from '../computeHeavyThings'
 
 export function HeavyComputation() {
   function handleClick() {
-    computeHeavyThings();
+    computeHeavyThings()
   }
 
-  return <button onClick={handleClick}>Do heavy computation</button>;
+  return <button onClick={handleClick}>Do heavy computation</button>
 }

@@ -1,8 +1,8 @@
-import { initRumProfiler } from "../src/main";
-import { createRoot } from "react-dom/client";
-import React from "react";
-import { Counter } from "./components/Counter";
-import { HeavyComputation } from "./components/HeavyComputation";
+import { initRumProfiler } from '../src/main'
+import { createRoot } from 'react-dom/client'
+import React from 'react'
+import { Counter } from './components/Counter'
+import { HeavyComputation } from './components/HeavyComputation'
 
 initRumProfiler({
   applicationId: import.meta.env.VITE_APPLICATION_ID,
@@ -11,9 +11,9 @@ initRumProfiler({
   version: import.meta.env.VITE_VERSION,
   env: import.meta.env.VITE_ENV,
   site: import.meta.env.VITE_SITE,
-});
+})
 
-const root = createRoot(document.getElementById("app")!);
+const root = createRoot(document.getElementById('app')!)
 root.render(
   <>
     <section>
@@ -23,4 +23,4 @@ root.render(
       <HeavyComputation />
     </section>
   </>
-);
+)
