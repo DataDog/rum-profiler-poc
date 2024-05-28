@@ -216,7 +216,7 @@ describe('exportToPprofIntake', () => {
     expect(firstProfilerSample.label).toEqual([
       {
         key: 'task',
-        str: 'Inferred Task (999999999995)',
+        str: 'Short Tasks',
       },
       {
         key: 'trace endpoint',
@@ -328,7 +328,7 @@ describe('exportToPprofIntake', () => {
             "label": [
               {
                 "key": "task",
-                "str": "Inferred Task (999999999995)",
+                "str": "Short Tasks",
               },
               {
                 "key": "end_timestamp_ns",

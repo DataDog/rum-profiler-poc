@@ -1,5 +1,4 @@
 import { EventsTimeline } from '../timeline/events-timeline'
-import { InferredTasksTimeline } from '../timeline/inferred-tasks-timeline'
 import { InteractionsTimeline } from '../timeline/interactions-timeline'
 import { LongTasksTimeline } from '../timeline/long-tasks-timeline'
 import { MeasuresTimeline } from '../timeline/measures-timeline'
@@ -50,7 +49,6 @@ function buildPprof(trace: RumProfilerTrace): Blob {
   const samplesView = new SamplesView(trace)
 
   const longTasksTimeline = new LongTasksTimeline(trace)
-  const inferredTasksTimeline = new InferredTasksTimeline(trace)
   const measuresTimeline = new MeasuresTimeline(trace)
   const eventsTimeline = new EventsTimeline(trace)
   const interactionsTimeline = new InteractionsTimeline(trace)
@@ -123,35 +121,29 @@ function buildPprof(trace: RumProfilerTrace): Blob {
       const sampleEndTime = samplesView.getEndTime(index)
 
       const longTasks = longTasksTimeline.get(sampleMiddleTime)
-      const inferredTasks = inferredTasksTimeline.get(sampleMiddleTime)
       const measures = measuresTimeline.get(sampleMiddleTime)
       const events = eventsTimeline.get(sampleMiddleTime)
       const interactions = interactionsTimeline.get(sampleMiddleTime)
       const navigation = navigationTimeline.get(sampleMiddleTime)
 
       const labels: Label[] = []
-      for (const longTask of longTasks) {
-        // Prefer official long tasks source
-        labels.push(
-          Label.fromPartial({
-            key: stringsTable.dedup('task'),
-            str: stringsTable.dedup(`Long Task (${Math.round(trace.timeOrigin + longTask.startTime)})`),
-          })
-        )
-      }
-      if (!longTasks.length) {
-        // Fallback to inferred tasks if no long tasks found
-        for (const inferredTask of inferredTasks) {
+
+      if (longTasks.length > 0) {
+        for (const longTask of longTasks) {
           labels.push(
             Label.fromPartial({
               key: stringsTable.dedup('task'),
-              str:
-                inferredTask.duration > 50
-                  ? stringsTable.dedup(`Inferred Long Task (${Math.round(trace.timeOrigin + inferredTask.startTime)})`)
-                  : stringsTable.dedup(`Inferred Task (${Math.round(trace.timeOrigin + inferredTask.startTime)})`),
+              str: stringsTable.dedup(`Long Task (${Math.round(trace.timeOrigin + longTask.startTime)})`),
             })
           )
         }
+      } else {
+        labels.push(
+          Label.fromPartial({
+            key: stringsTable.dedup('task'),
+            str: stringsTable.dedup('Short Tasks'),
+          })
+        )
       }
       for (const measure of measures) {
         labels.push(
