@@ -9,6 +9,8 @@ export interface RumProfilerConfig {
     version: string;
     env: string | undefined;
     site: string;
+    commitHash: string | undefined;
+    repositoryUrl: string | undefined;
 }
 export interface RumNavigationEntry {
     /** Detected start time of navigation */

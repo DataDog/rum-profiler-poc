@@ -85,6 +85,8 @@ initRumProfiler({
   service: 'my-service', // keep in sync with `--service` passed to datadog-ci sourcemaps upload command
   version: 'my-version', // keep in sync with `--release-version` passed to datadog-ci sourcemaps upload command
   profilingSampleRate: 10, // run profiler for 10% of sessions
+  commitHash: CI_COMMIT_SHA, // commit sha for source code preview (coming soon)
+  repositoryUrl: 'https://github.com/MyCompany/my-repository.git', // repository url for source code preview (coming soon)
 })
 ```
 

@@ -37,6 +37,14 @@ export interface RumProfilerInitOptions {
    * Only tracked sessions send RUM profiles.
    */
   profilingSampleRate?: number
+  /**
+   * The current commit hash of the application.
+   */
+  commitHash?: string
+  /**
+   * The repository URL of the application.
+   */
+  repositoryUrl?: string
 }
 
 type StopRumProfiler = () => Promise<void>
@@ -49,6 +57,8 @@ export function initRumProfiler({
   env,
   site = DEFAULT_INTAKE,
   profilingSampleRate = DEFAULT_PROFILING_SAMPLE_RATE,
+  commitHash,
+  repositoryUrl,
 }: RumProfilerInitOptions): StopRumProfiler {
   if (shouldSample(profilingSampleRate)) {
     const profiler = new RumProfiler({
@@ -58,6 +68,8 @@ export function initRumProfiler({
       version,
       env,
       site,
+      commitHash,
+      repositoryUrl,
     })
     profiler.start()
 

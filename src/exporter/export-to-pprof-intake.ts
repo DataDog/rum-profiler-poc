@@ -274,6 +274,12 @@ function sendPprof(start: Date, end: Date, pprof: Blob, config: RumProfilerConfi
       .toLowerCase()
       .slice(0, 200)}`,
   ]
+  if (config.commitHash) {
+    eventTags.push(`git.commit.sha:${config.commitHash}`)
+  }
+  if (config.repositoryUrl) {
+    eventTags.push(`git.repository_url:${config.repositoryUrl}`)
+  }
   const sessionId = getRum()?.getInternalContext()?.session_id
   if (sessionId) {
     eventTags.push(`session_id:${sessionId}`)

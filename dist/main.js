@@ -1709,7 +1709,9 @@ function sendPprof(i, e, t, n) {
     "format:pprof",
     // TODO: replace with RUM device id in the future
     `host:${navigator.userAgent.replace(/[^a-zA-Z0-9_\-:./]/g, "_").replace(/__/g, "_").toLowerCase().slice(0, 200)}`
-  ], o = (h = (f = getRum()) == null ? void 0 : f.getInternalContext()) == null ? void 0 : h.session_id;
+  ];
+  n.commitHash && r.push(`git.commit.sha:${n.commitHash}`), n.repositoryUrl && r.push(`git.repository_url:${n.repositoryUrl}`);
+  const o = (h = (f = getRum()) == null ? void 0 : f.getInternalContext()) == null ? void 0 : h.session_id;
   o && r.push(`session_id:${o}`);
   const s = {
     attachments: ["wall-time.pprof"],
@@ -1838,17 +1840,19 @@ function shouldSample(i) {
   return i >= 100 ? !0 : i <= 0 ? !1 : Math.random() <= i / 100;
 }
 const DEFAULT_INTAKE = "datadoghq.com", DEFAULT_PROFILING_SAMPLE_RATE = 100;
-function initRumProfiler({ applicationId: i, clientToken: e, service: t, version: n, env: r, site: o = DEFAULT_INTAKE, profilingSampleRate: s = DEFAULT_PROFILING_SAMPLE_RATE }) {
+function initRumProfiler({ applicationId: i, clientToken: e, service: t, version: n, env: r, site: o = DEFAULT_INTAKE, profilingSampleRate: s = DEFAULT_PROFILING_SAMPLE_RATE, commitHash: l, repositoryUrl: u }) {
   if (shouldSample(s)) {
-    const l = new RumProfiler({
+    const a = new RumProfiler({
       applicationId: i,
       clientToken: e,
       service: t,
       version: n,
       env: r,
-      site: o
+      site: o,
+      commitHash: l,
+      repositoryUrl: u
     });
-    return l.start(), () => l.stop();
+    return a.start(), () => a.stop();
   }
   return () => Promise.resolve();
 }
