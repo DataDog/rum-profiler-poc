@@ -90,11 +90,26 @@ initRumProfiler({
 })
 ```
 
-#### 6. Check the setup
+#### 6. Link RUM Long Tasks (optional)
 
-If everything went well, you should observe a request to `https://browser-intake-datadoghq.com/api/v2/profile` every minute on your page (with `202 Accepted` response). Profiles should appear on the APM / Profiles page, tagged with the specified `service` and `version`. Additionally, you can utilize the `session_id` attribute to find profiles from a specific RUM session. Keep in mind that it might take up to 3 minutes from the intake to profile being visible on the page.
+Import `beforeSend()` function and pass it to RUM init configuration.
+If you do that, we will show you Flame Graphs directly in Long Task details in RUM product.
 
-#### 7. Finish
+```typescript
+import { datadogRum } from '@datadog/browser-rum'
+import { beforeSend } from '@datadog/rum-profiler-poc'
+
+datadogRum.init({
+  // ...
+  beforeSend,
+})
+```
+
+#### 7. Check the setup
+
+If everything went well, you should observe a request to `https://browser-intake-datadoghq.com/api/v2/profile` every minute on your page (with `202 Accepted` response). Profiles should appear on the APM / Profiles page, tagged with the specified `service` and `version`. Additionally, you can utilize the `@session.id` attribute to find profiles from a specific RUM session. Keep in mind that it might take up to 3 minutes from the intake to profile being visible on the page.
+
+#### 8. Finish
 
 Congratulations! We understand that setting up might be a little challenging, but now you have high-resolution performance data for your application! Let us know what you find useful, what is confusing, and what is missing.
 

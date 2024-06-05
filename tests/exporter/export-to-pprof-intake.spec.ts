@@ -11,6 +11,7 @@ import type { RumProfilerTrace } from '../../src/types'
 import { trace as playgroundTrace } from './__fixtures__/playground-trace'
 import { trace as zeroIndexTrace } from './__fixtures__/zero-index-trace'
 import { exportToPprofIntake } from '../../src/exporter/export-to-pprof-intake'
+import { UUID_PATTERN } from '../uuid-pattern'
 
 describe('exportToPprofIntake', () => {
   const { extractIntakeUrlAndFormDataFromSendBeacon } = mockSendBeacon(false)
@@ -34,9 +35,7 @@ describe('exportToPprofIntake', () => {
     expect(intakeUrlFromSendBeacon.searchParams.get('ddtags')).toBe('api:beacon')
     expect(intakeUrlFromSendBeacon.searchParams.get('dd-api-key')).toBe('my-client-token')
     expect(intakeUrlFromSendBeacon.searchParams.get('dd-evp-origin')).toBe('browser')
-    expect(intakeUrlFromSendBeacon.searchParams.get('dd-request-id')).toMatch(
-      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-    )
+    expect(intakeUrlFromSendBeacon.searchParams.get('dd-request-id')).toMatch(UUID_PATTERN)
 
     // Fetch URL
     expect(intakeUrlFromFetch.protocol).toBe('https:')
@@ -47,9 +46,7 @@ describe('exportToPprofIntake', () => {
     expect(intakeUrlFromFetch.searchParams.get('ddtags')).toBe('api:fetch')
     expect(intakeUrlFromFetch.searchParams.get('dd-api-key')).toBe('my-client-token')
     expect(intakeUrlFromFetch.searchParams.get('dd-evp-origin')).toBe('browser')
-    expect(intakeUrlFromFetch.searchParams.get('dd-request-id')).toMatch(
-      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-    )
+    expect(intakeUrlFromFetch.searchParams.get('dd-request-id')).toMatch(UUID_PATTERN)
 
     // We should use the same form data object for both sendBeacon and fetch
     expect(formDataFromBeacon).toBe(formDataFromFetch)
@@ -78,7 +75,15 @@ describe('exportToPprofIntake', () => {
         'git.commit.sha:my-commit-hash',
         'git.repository_url:https://my-repository-url',
       ].join(','),
-      version: '4',
+      application: {
+        id: 'my-application-id',
+      },
+      context: {
+        profile_long_task_id: [expect.stringMatching(UUID_PATTERN)],
+      },
+      view: {
+        name: ['/'],
+      },
     })
 
     const wallTimeBlob = formData.get('wall-time.pprof') as Blob
